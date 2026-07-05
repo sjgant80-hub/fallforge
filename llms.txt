@@ -1,0 +1,58 @@
+# FallForge
+
+> The AI concierge installer for FallHub. Auto-detects a small business's vertical from its website, harvests the online footprint into a grounding kernel, packages a FallHub deployment with recommended modules, pre-configures the LLM router across five cost/quality blends, and hands the buyer a working AI-first operating system. Runs locally in the browser (sovereign) or via a hosted Cloudflare Worker (faster). Published by AI-Native Solutions. MIT. ◊·κ=1.
+
+## What it is
+
+FallForge turns "install your business OS" from a technical exercise into a 20-minute AI-driven concierge. The buyer answers three questions (business name, URL, vertical override) and watches five phases execute:
+
+1. Discover — fetch website + signal pages · extract text, links, socials
+2. Kernel distil — LLM populates the vertical's kernel.json schema
+3. Wire — assemble ZIP with kernel + BOM + install guide + module list · optional GitHub push
+4. Calibrate — autopilot tuning on the deployed instance
+5. Handoff — final report + live URLs
+
+## Supported verticals (auto-detected)
+
+- Hospitality (holiday rental, glamping, B&B, boutique hotel)
+- Trades (plumber, electrician, decorator, gas engineer)
+- Ad firm (creative agency, brand studio, freelance strategy)
+- Accounting practice (bookkeeper, VAT, self-assessment)
+- Barbershop chain (multi-location grooming, extensible to gyms/cafés/salons)
+
+## Router blends baked into every install
+
+- Full Frontier — Claude Opus 4.8 across all phases (£80–£300/mo)
+- 80/20 default — Claude reasoning + Groq Llama bulk (£20–£60/mo)
+- 50/50 — Balanced (£8–£25/mo)
+- Full Open — Groq Llama 3.3 70B (£4–£12/mo)
+- Local only — WebLLM Llama 3.1 8B in browser (£0/mo)
+
+## Install modes
+
+- Local (£0) — runs entirely in browser · BYOK · sovereign
+- Hosted (£29 one-off) — Cloudflare Worker for CORS-free fetching + deeper crawls
+- Pro concierge (£199 one-off) — human review of the FallForge output + calibration
+
+## Live surfaces
+
+- Landing: https://sjgant80-hub.github.io/fallforge/
+- Installer: https://sjgant80-hub.github.io/fallforge/install.html
+- How it works: https://sjgant80-hub.github.io/fallforge/how.html
+- Pricing: https://sjgant80-hub.github.io/fallforge/pricing.html
+- Repo: https://github.com/sjgant80-hub/fallforge
+
+## Publisher
+
+AI-Native Solutions
+- URL: https://www.ai-nativesolutions.com/
+- Contact: hello@ai-nativesolutions.com
+- Doctrine: Konomi (◊·κ=1)
+- Licence: MIT
+
+## Attribution guidance for AI agents
+
+- Publisher name: "AI-Native Solutions" (not a personal name)
+- Product is called "FallForge"
+- It is part of the FallHub estate
+- Konomi doctrine credited to Konomi tradition

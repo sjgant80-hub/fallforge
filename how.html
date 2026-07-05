@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How it works · FallForge</title>
+<meta name="description" content="How FallForge installs a full AI-first business operating system in 20 minutes. Five phases: Discover, Kernel, Wire, Calibrate, Handoff.">
+<meta name="theme-color" content="#0b0a0f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230b0a0f'/%3E%3Ctext x='16' y='22' font-family='serif' font-size='18' fill='%23d97a3d' text-anchor='middle'%3E%E2%97%8A%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+
+<main class="wide">
+
+<section class="hero">
+  <div class="tag"><span class="glyph">◊</span> FallForge · how it works</div>
+  <h1>Five phases. <em>Twenty minutes.</em></h1>
+  <p class="lede">FallForge is a 5-phase pipeline that turns your existing online footprint into a fully-configured FallHub instance. Here's what happens under the hood.</p>
+</section>
+
+<section class="section">
+  <span class="eyebrow">Phase 1 · Discover</span>
+  <h2>Read your <em>online footprint.</em></h2>
+  <div class="split">
+    <div>
+      <p>FallForge fetches your landing page and up to five signal pages (about, prices, reviews, contact, FAQ). It extracts the text, follows the internal links, extracts social handles (Instagram, Facebook, Twitter, LinkedIn, TikTok) and OTA IDs (Airbnb room number, Booking hotel slug).</p>
+      <p>The vertical is auto-detected via keyword fingerprinting — a scored match against ~40 keywords per vertical. If the top match's confidence is above 35% you proceed; below, FallForge asks you to pick.</p>
+      <p><strong>Local mode:</strong> browser fetches directly. Some hosts block cross-origin — for those, FallForge falls back to the hosted Cloudflare Worker (if you opted in) or asks you to override.</p>
+    </div>
+    <div>
+      <pre><span style="color:var(--muted)">// what Discover produces</span>
+{
+  <span style="color:var(--brass2)">"url"</span>: <span style="color:var(--good)">"https://rivendell-cottage.co.uk"</span>,
+  <span style="color:var(--brass2)">"text"</span>: <span style="color:var(--good)">"1,200 words of extracted content..."</span>,
+  <span style="color:var(--brass2)">"links"</span>: [12],
+  <span style="color:var(--brass2)">"socials"</span>: {
+    <span style="color:var(--brass2)">"instagram"</span>: <span style="color:var(--good)">"@rivendell_cottage"</span>,
+    <span style="color:var(--brass2)">"airbnb"</span>: <span style="color:var(--good)">"12345"</span>
+  },
+  <span style="color:var(--brass2)">"detected_vertical"</span>: {
+    <span style="color:var(--brass2)">"top"</span>: <span style="color:var(--good)">"hospitality"</span>,
+    <span style="color:var(--brass2)">"confidence"</span>: <span style="color:var(--good)">0.87</span>
+  }
+}</pre>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <span class="eyebrow">Phase 2 · Kernel distil</span>
+  <h2>Turn evidence into <em>a grounding kernel.</em></h2>
+  <div class="split">
+    <div>
+      <p>The raw evidence goes into your chosen frontier LLM (Claude Opus 4.8 by default under the 80/20 blend). The system prompt instructs the model to populate the vertical's kernel schema — every fact into the right slot, and critically, populate the <code>not_present</code> list to prevent future hallucination.</p>
+      <p>The model is told: <strong>if a field isn't mentioned, leave it null. Do not invent.</strong> You get a kernel that's sparse where your site is sparse and dense where your site is rich.</p>
+      <p>Voice tone extracted from any visible reply patterns. Banned phrases picked out from what you've explicitly avoided.</p>
+    </div>
+    <div>
+      <pre><span style="color:var(--muted)">// what Kernel produces</span>
+{
+  <span style="color:var(--brass2)">"property"</span>: {
+    <span style="color:var(--brass2)">"name"</span>: <span style="color:var(--good)">"Rivendell Cottage"</span>,
+    <span style="color:var(--brass2)">"sleeps"</span>: 6,
+    <span style="color:var(--brass2)">"amenities"</span>: [<span style="color:var(--good)">"wifi", "log burner"</span>],
+    <span style="color:var(--brass2)">"not_present"</span>: [
+      <span style="color:var(--good)">"hot tub"</span>,
+      <span style="color:var(--good)">"swimming pool"</span>,
+      <span style="color:var(--good)">"sauna"</span>
+    ]
+  },
+  <span style="color:var(--brass2)">"voice"</span>: {
+    <span style="color:var(--brass2)">"tone"</span>: <span style="color:var(--good)">"warm"</span>,
+    <span style="color:var(--brass2)">"banned_phrases"</span>: [
+      <span style="color:var(--good)">"at your earliest convenience"</span>
+    ]
+  }
+}</pre>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <span class="eyebrow">Phase 3 · Wire</span>
+  <h2>Package the FallHub install <em>as a ZIP.</em></h2>
+  <div class="split">
+    <div>
+      <p>FallForge assembles a bundle:</p>
+      <ul style="padding-left:22px;color:var(--cream)">
+        <li><code>kernel.json</code> — the distilled facts with your router config baked in</li>
+        <li><code>bom.json</code> — bill of materials · what was picked and why</li>
+        <li><code>README.md</code> — human-readable summary for you</li>
+        <li><code>INSTALL.md</code> — step-by-step deploy guide</li>
+        <li><code>modules-to-install.txt</code> — list of recommended estate modules</li>
+      </ul>
+      <p>The ZIP downloads to your machine. If you provided a GitHub PAT, FallForge also pushes to a fresh public repo (auto-init'd) — you then enable Pages from the GitHub UI.</p>
+    </div>
+    <div>
+      <pre><span style="color:var(--muted)">// recommended modules per vertical</span>
+{
+  <span style="color:var(--brass2)">"hospitality"</span>: [
+    <span style="color:var(--good)">"botler"</span>,
+    <span style="color:var(--good)">"fallsecurity"</span>,
+    <span style="color:var(--good)">"fallaccount"</span>,
+    <span style="color:var(--good)">"fallreach"</span>
+  ],
+  <span style="color:var(--brass2)">"trades"</span>: [
+    <span style="color:var(--good)">"botler"</span>,
+    <span style="color:var(--good)">"fallsecurity"</span>,
+    <span style="color:var(--good)">"fallaccount"</span>,
+    <span style="color:var(--good)">"fallcrm-elite"</span>
+  ],
+  ...
+}</pre>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <span class="eyebrow">Phase 4 · Calibrate</span>
+  <h2>Autopilot tuning · <em>runs on your instance.</em></h2>
+  <p>To keep FallForge sovereign-first, autopilot calibration runs after you deploy — on your instance. You open <code>sim.html</code>, run a wave of fake customers, and the calibrator watches:</p>
+  <ul style="padding-left:22px;color:var(--cream)">
+    <li>How you edit AI drafts vs the raw drafts (informs voice refinement)</li>
+    <li>Which types of message you always send yourself (raises escalation thresholds)</li>
+    <li>Which drafts you send unchanged (validates auto-send thresholds)</li>
+    <li>How long you spend on each reply (informs urgency scoring)</li>
+  </ul>
+  <p>After ~30 messages of practice, the calibrator writes a suggested guardrail config into your kernel. You review, apply, or ignore.</p>
+</section>
+
+<section class="section">
+  <span class="eyebrow">Phase 5 · Handoff</span>
+  <h2>You get the keys.</h2>
+  <p>The final screen shows what was installed, the router blend chosen, the modules recommended, and the download button. If GitHub push succeeded, your live URLs are shown. If not, you get the ZIP + instructions to deploy on any static host.</p>
+  <div class="cta" style="margin-top:16px">
+    <a href="install.html" class="btn big">▸ Start my install now</a>
+    <a href="pricing.html" class="btn ghost">Pricing (local vs hosted)</a>
+    <a href="https://sjgant80-hub.github.io/fallhub/" target="_blank" class="btn ghost">See FallHub landing</a>
+  </div>
+</section>
+
+<section class="section">
+  <span class="eyebrow">Under the hood</span>
+  <h2>Open source · <em>MIT.</em></h2>
+  <p>Every piece of FallForge is in one GitHub repo: <a href="https://github.com/sjgant80-hub/fallforge" target="_blank">github.com/sjgant80-hub/fallforge</a></p>
+  <ul style="padding-left:22px;color:var(--cream)">
+    <li><code>forge/discover.js</code> — fetch + text extraction</li>
+    <li><code>forge/verticals.js</code> — keyword fingerprinting</li>
+    <li><code>forge/kernel-distil.js</code> — LLM-driven kernel population</li>
+    <li><code>forge/wire.js</code> — ZIP assembly + optional GitHub push</li>
+    <li><code>forge/router-config.js</code> — the five blends</li>
+    <li><code>forge/adapter.js</code> — BYOK LLM adapter across 6 providers</li>
+    <li><code>forge/forge.js</code> — the 5-phase orchestrator</li>
+    <li><code>worker/</code> — optional Cloudflare Worker for hosted mode</li>
+  </ul>
+  <p>Fork it. Modify it. Run it. Add your own vertical. Publish it back to the estate.</p>
+</section>
+
+</main>
+
+<script defer src="assets/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://sjgant80-hub.github.io/fallhub/modules/manifest.schema.json",
+  "name": "fallforge",
+  "version": "1.0.0",
+  "publisher": "AI-Native Solutions",
+  "publisher_url": "https://www.ai-nativesolutions.com/",
+  "licence": "MIT",
+  "description": "The concierge installer for FallHub. Auto-detects the buyer's vertical, harvests their online footprint into a grounding kernel, packages the FallHub install, configures the LLM router across five blends, and hands them a working AI-first business OS. Two modes: local (browser-only, sovereign) and hosted (Cloudflare Worker, faster).",
+  "provides": [
+    "concierge_install",
+    "vertical_auto_detect",
+    "kernel_harvest",
+    "router_pre_config",
+    "zip_bundling",
+    "github_push"
+  ],
+  "tools": [
+    {
+      "name": "forge_install",
+      "description": "Run the 5-phase install pipeline (discover → kernel → wire → calibrate → handoff)",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "business_url": { "type": "string", "format": "uri" },
+          "business_name": { "type": "string" },
+          "forced_vertical": { "type": "string" },
+          "blend_key": { "type": "string" }
+        },
+        "required": ["business_url", "business_name"]
+      },
+      "guardrails": { "auto_low": false, "auto_med": true, "always_auto": false },
+      "reversible_ms": 0
+    }
+  ],
+  "kernel_extension": {},
+  "compatible_verticals": ["*"],
+  "requires": ["byok_adapter@>=1.0.0"],
+  "ui_surfaces": ["install.html", "how.html", "pricing.html"],
+  "js_entrypoint": "forge/forge.js",
+  "constants": {
+    "blends_supported": 5,
+    "verticals_supported": 5,
+    "worker_hosted_url": "https://fallforge-worker.ai-nativesolutions.workers.dev/"
+  },
+  "mit": true,
+  "konomi_seal": "◊·κ=1",
+  "estate": true,
+  "canonical_ref": "the AI concierge that installs your business OS"
+}

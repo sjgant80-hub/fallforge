@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Install my business · FallForge</title>
+<meta name="description" content="Point FallForge at your website. Watch the AI install your entire business operating system.">
+<meta name="theme-color" content="#0b0a0f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230b0a0f'/%3E%3Ctext x='16' y='22' font-family='serif' font-size='18' fill='%23d97a3d' text-anchor='middle'%3E%E2%97%8A%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+
+<main>
+
+<section class="hero">
+  <div class="tag"><span class="glyph">◊</span> FallForge · install session</div>
+  <h1>Let's install <em>your business.</em></h1>
+  <p class="lede">Point FallForge at your website. It scrapes your online footprint, distils your kernel, packages your FallHub instance. Answer three questions. Watch the phases run.</p>
+</section>
+
+<div id="stepIntake" class="installer">
+  <h3 style="color:var(--forge);font-style:italic;margin-bottom:14px">Step 1 · Tell FallForge about your business</h3>
+
+  <label>Business name</label>
+  <input id="bizName" placeholder="Rivendell Cottage · Fadeworks Barbers · Ellis &amp; Co · etc.">
+
+  <label>Your public website URL</label>
+  <input id="bizUrl" placeholder="https://your-business.co.uk" type="url">
+
+  <label>Vertical <span style="color:var(--muted);text-transform:none;letter-spacing:0.02em;font-family:var(--sans)">(auto-detected · override if you like)</span></label>
+  <select id="verticalPick">
+    <option value="">Auto-detect from my site</option>
+    <option value="hospitality">Hospitality (holiday rental / glamping / B&amp;B / boutique hotel)</option>
+    <option value="trades">Trades (plumber / electrician / decorator / gas engineer)</option>
+    <option value="adshop">Ad firm (creative agency / brand studio)</option>
+    <option value="accounting">Accounting practice (bookkeeper / VAT / self-assessment)</option>
+    <option value="barbershop">Barbershop chain (multi-location grooming)</option>
+  </select>
+
+  <label>Router blend</label>
+  <div class="blend-grid" id="blendPicker"></div>
+  <div id="blendTagline" style="color:var(--muted);font-size:13px;font-style:italic;margin-top:2px"></div>
+
+  <div id="keySection" style="margin-top:20px">
+    <label>API key <span style="color:var(--muted);text-transform:none;letter-spacing:0.02em;font-family:var(--sans)" id="keyProviderLabel">— paste your provider's key · never leaves your browser</span></label>
+    <input id="apiKey" type="password" placeholder="Paste your key here">
+    <div style="color:var(--muted);font-size:12px;margin-top:-4px;margin-bottom:10px">Get keys: <a href="https://console.anthropic.com/settings/keys" target="_blank">Anthropic</a> · <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a> · <a href="https://console.groq.com/keys" target="_blank">Groq</a> · <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI</a> · <a href="https://console.mistral.ai/api-keys" target="_blank">Mistral</a></div>
+  </div>
+
+  <details style="margin-top:14px;background:var(--void2);border-radius:8px;padding:12px 14px;border:1px solid var(--line)">
+    <summary style="cursor:pointer;color:var(--brass);font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase">Optional · push to GitHub too</summary>
+    <div style="margin-top:12px">
+      <label>GitHub username</label>
+      <input id="ghUser" placeholder="your-github-handle">
+      <label>New repo name</label>
+      <input id="ghRepo" placeholder="my-fallhub-instance">
+      <label>Personal access token <span style="color:var(--muted);text-transform:none;letter-spacing:0.02em;font-family:var(--sans)">· needs repo scope</span></label>
+      <input id="ghToken" type="password" placeholder="ghp_...">
+      <div style="color:var(--muted);font-size:12px">If left blank we just download the ZIP for you.</div>
+    </div>
+  </details>
+
+  <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+    <button id="startBtn" class="btn big">▸ Forge my install</button>
+    <a href="how.html" class="btn ghost">How it works</a>
+  </div>
+</div>
+
+<div id="stepRun" class="installer" style="display:none">
+  <h3 style="color:var(--forge);font-style:italic;margin-bottom:14px">Forging · <span id="runBiz"></span></h3>
+
+  <div class="progress-track">
+    <div class="progress-fill" id="pfill" style="width:0%"></div>
+    <div class="progress-label" id="plbl">0% · starting…</div>
+  </div>
+
+  <ul class="phase-list" id="phaseList">
+    <li data-phase="discover"><span class="idx">1</span>Discover · fetching your footprint</li>
+    <li data-phase="kernel"><span class="idx">2</span>Kernel · distilling your business facts</li>
+    <li data-phase="wire"><span class="idx">3</span>Wire · packaging your FallHub install</li>
+    <li data-phase="calibrate"><span class="idx">4</span>Calibrate · autopilot tuning queued</li>
+    <li data-phase="handoff"><span class="idx">5</span>Handoff · delivering your bundle</li>
+  </ul>
+
+  <h4 style="color:var(--cream);font-family:var(--serif);font-style:italic;font-weight:400;margin:20px 0 8px">Live log</h4>
+  <div class="log" id="logEl"></div>
+</div>
+
+<div id="stepDone" class="installer" style="display:none">
+  <h3 style="color:var(--good);font-style:italic;margin-bottom:14px">◊ Your install is forged</h3>
+  <p style="color:var(--creamL);font-size:16px">Your FallHub package is ready. Bill of materials below. Follow the <code>INSTALL.md</code> in the bundle to go live.</p>
+
+  <div id="handoffSummary" class="card raised" style="margin-top:14px"></div>
+
+  <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+    <button id="downloadBtn" class="btn big">⬇ Download my install</button>
+    <a href="https://sjgant80-hub.github.io/fallhub/setup.html" target="_blank" class="btn ghost">Setup guide</a>
+    <a href="install.html" class="btn ghost">Forge another</a>
+  </div>
+</div>
+
+</main>
+
+<script defer src="assets/nav.js"></script>
+<script type="module">
+import { runForge, BLENDS, VERTICAL_LIST, getVertical, downloadZip } from './forge/forge.js';
+import { pickBlendDefault } from './forge/router-config.js';
+
+const $ = id => document.getElementById(id);
+
+const state = { blendKey: 'eighty20', zipBlob: null };
+
+/* Populate blend picker */
+function renderBlends() {
+  const el = $('blendPicker');
+  el.innerHTML = Object.values(BLENDS).map(b =>
+    `<button data-key="${b.key}" title="${b.tagline}"><div>${b.label}</div><div style="opacity:0.7;font-size:9px;margin-top:2px">${b.monthly_gbp_range}</div></button>`
+  ).join('');
+  el.querySelectorAll('button').forEach(btn => {
+    btn.onclick = () => {
+      state.blendKey = btn.dataset.key;
+      el.querySelectorAll('button').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      const b = BLENDS[btn.dataset.key];
+      $('blendTagline').textContent = b.tagline + ' · monthly ' + b.monthly_gbp_range;
+      updateKeyProviderHint(b);
+    };
+  });
+  el.querySelector('[data-key="eighty20"]').click();
+}
+
+function updateKeyProviderHint(blend) {
+  const providers = new Set(Object.values(blend.routes).map(r => r.provider));
+  providers.delete('webllm');
+  const list = Array.from(providers);
+  $('keyProviderLabel').textContent = list.length ? `— paste your ${list.join(' or ')} key (never leaves your browser)` : '— WebLLM only · no key needed';
+  $('keySection').style.display = list.length ? 'block' : 'none';
+}
+
+renderBlends();
+
+/* Read ?mode= from query · reserved for future hosted-mode fork */
+const params = new URLSearchParams(location.search);
+state.mode = params.get('mode') || 'local';
+
+/* Kick off */
+$('startBtn').onclick = async () => {
+  const businessUrl = $('bizUrl').value.trim();
+  const businessName = $('bizName').value.trim();
+  const forcedVertical = $('verticalPick').value || null;
+  const apiKey = $('apiKey').value.trim();
+  const ghUser = $('ghUser').value.trim();
+  const ghRepo = $('ghRepo').value.trim();
+  const ghToken = $('ghToken').value.trim();
+
+  if (!businessUrl) { alert('Please enter your business URL'); return; }
+  if (!businessName) { alert('Please enter your business name'); return; }
+
+  /* Assemble keys map · every non-webllm provider in the blend gets this key */
+  const blend = BLENDS[state.blendKey];
+  const keys = {};
+  for (const route of Object.values(blend.routes)) {
+    if (route.provider !== 'webllm') keys[route.provider] = apiKey;
+  }
+
+  /* Move to run step */
+  $('stepIntake').style.display = 'none';
+  $('stepRun').style.display = 'block';
+  $('runBiz').textContent = businessName;
+
+  const phaseList = document.querySelectorAll('#phaseList li');
+
+  try {
+    const result = await runForge({
+      businessUrl,
+      businessName,
+      forcedVertical,
+      blendKey: state.blendKey,
+      keys,
+      githubToken: ghToken || null,
+      ownerHandle: ghUser || null,
+      repoName: ghRepo || null,
+      onPhase: ({ phase, pct, msg }) => {
+        $('pfill').style.width = pct + '%';
+        $('plbl').textContent = `${pct}% · ${msg}`;
+        phaseList.forEach(li => {
+          if (li.dataset.phase === phase) { li.classList.add('active'); li.classList.remove('done'); }
+        });
+        // Mark earlier phases done
+        const phases = ['discover', 'kernel', 'wire', 'calibrate', 'handoff'];
+        const idx = phases.indexOf(phase);
+        phases.slice(0, idx).forEach(p => {
+          const el = document.querySelector(`#phaseList li[data-phase="${p}"]`);
+          if (el) { el.classList.add('done'); el.classList.remove('active'); }
+        });
+        if (pct >= 100) {
+          const el = document.querySelector(`#phaseList li[data-phase="handoff"]`);
+          if (el) { el.classList.add('done'); el.classList.remove('active'); }
+        }
+      },
+      onLog: ({ phase, msg, level }) => {
+        const el = $('logEl');
+        const cls = level === 'ok' ? 'ok' : level === 'err' ? 'err' : level === 'warn' ? 'err' : '';
+        const html = `<div class="l ${cls}"><span class="t">${new Date().toLocaleTimeString()}</span><span style="color:var(--brass2);margin-right:6px">[${phase}]</span>${_esc(msg)}</div>`;
+        el.insertAdjacentHTML('afterbegin', html);
+      }
+    });
+
+    state.zipBlob = result.zipBlob;
+    state.result = result;
+    renderHandoff(result);
+    $('stepRun').style.display = 'none';
+    $('stepDone').style.display = 'block';
+  } catch (e) {
+    console.error(e);
+    const el = $('logEl');
+    el.insertAdjacentHTML('afterbegin', `<div class="l err"><span class="t">${new Date().toLocaleTimeString()}</span><span style="color:var(--brass2);margin-right:6px">[error]</span>${_esc(e.message)}</div>`);
+    alert('Forge failed: ' + e.message);
+  }
+};
+
+function renderHandoff(r) {
+  const b = r.package.bom;
+  const ghNote = r.githubResult
+    ? `<p style="color:var(--good)">✓ Pushed to <a href="${r.githubResult.repo_url}" target="_blank">${r.githubResult.repo_url}</a><br>Pages URL (once enabled): <a href="${r.githubResult.pages_url}" target="_blank">${r.githubResult.pages_url}</a></p>`
+    : '';
+  $('handoffSummary').innerHTML = `
+    <h4 style="color:var(--creamL);font-size:18px">Bill of materials</h4>
+    <ul style="padding-left:20px;color:var(--cream);margin-top:8px">
+      <li><strong>Business:</strong> ${_esc(b.name)}</li>
+      <li><strong>Vertical:</strong> ${_esc(b.vertical)}</li>
+      <li><strong>Router blend:</strong> ${_esc(r.blend.label)} · ${_esc(r.blend.monthly_gbp_range)}/month</li>
+      <li><strong>Modules recommended:</strong> ${b.modules_installed.join(', ')}</li>
+      <li><strong>Autonomy default:</strong> ${b.autonomy_default}</li>
+    </ul>
+    <p style="color:var(--dim);font-size:13px;margin-top:12px">Forged in ${((Date.now() - r.startedAt) / 1000).toFixed(1)}s</p>
+    ${ghNote}
+  `;
+}
+
+$('downloadBtn').onclick = () => {
+  if (!state.zipBlob) return;
+  const safeName = (state.result?.package?.bom?.name || 'business').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  downloadZip(state.zipBlob, `fallforge-${safeName}.zip`);
+};
+
+function _esc(s) { return String(s).replace(/[<>&]/g, c => ({ '<':'&lt;','>':'&gt;','&':'&amp;' })[c]); }
+</script>
+</body>
+</html>
