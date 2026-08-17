@@ -1,0 +1,13 @@
+{
+  "name": "fallforge",
+  "version": "1.0.0",
+  "description": "Concierge installer for FallHub: auto-detects a business vertical from its public footprint, distils a grounding kernel, and packages a deployable install across five LLM router blends. Local (browser-only) and hosted (Cloudflare Worker) modes.",
+  "type": "module",
+  "license": "MIT",
+  "author": "AI-Native Solutions",
+  "homepage": "https://sjgant80-hub.github.io/fallforge/",
+  "main": "forge/forge.js",
+  "scripts": {
+    "test": "node test.mjs"
+  }
+}
