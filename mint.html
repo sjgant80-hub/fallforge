@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FallForge · Mint an owned model — own the AI you're renting</title>
+<meta name="description" content="Bring one repetitive task. FallForge mints you a small model you OWN — tuned to that task, proven cheaper and sharper than the frontier model you rent per token, running on your own hardware, with a signed receipt. If the receipt doesn't say it beats your baseline, you don't pay.">
+<meta name="author" content="AI-Native Solutions">
+<meta name="theme-color" content="#0b0a0f">
+<meta property="og:title" content="FallForge · Mint an owned model">
+<meta property="og:description" content="A small model tuned to your task, proven with a signed receipt, running on your metal. If it doesn't beat your baseline, you don't pay.">
+<meta property="og:url" content="https://sjgant80-hub.github.io/fallforge/mint.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230b0a0f'/%3E%3Ctext x='16' y='22' font-family='serif' font-size='18' fill='%23d97a3d' text-anchor='middle'%3E%E2%97%8A%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Service",
+      "@id": "https://sjgant80-hub.github.io/fallforge/mint.html#service",
+      "name": "FallForge · Mint an owned model",
+      "serviceType": "Custom small-language-model minting, proven against baseline",
+      "provider": { "@type": "Organization", "name": "AI-Native Solutions", "url": "https://www.ai-nativesolutions.com/" },
+      "description": "For one repetitive task, FallForge mints a small model the buyer owns, measures it against its baseline on a held-out set with a deterministic gate, and issues a signed receipt. If the receipt does not show it beats the baseline, the buyer does not pay.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP", "description": "Free proof node — one task, one company" }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://sjgant80-hub.github.io/fallforge/mint.html#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What does it mean to own an AI model instead of renting one?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A rented model bills you per token forever and runs on the vendor's servers. An owned model is a small model file, specialised to one of your tasks, that you keep and run on your own hardware — no per-token bill, and your data never leaves your control." }
+        },
+        {
+          "@type": "Question",
+          "name": "How do you prove an owned model is actually better than what I rent?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A deterministic gate measures the minted model against its baseline on a held-out test set and issues a signed receipt: beats baseline by X percent, this much cheaper, this much faster. The gate can and does return LOSES, which is why the guarantee is possible — if the receipt does not say it beats your baseline, you do not pay." }
+        },
+        {
+          "@type": "Question",
+          "name": "Is any of this live, or just a pitch?",
+          "acceptedAnswer": { "@type": "Answer", "text": "The whole minting factory is built, public and mutation-gated: the gate, the mint, the runtime, the catalogue, the mesh, and the factory that chains them are all live and checkable in a browser. A real minted node, triage-1b for support-ticket routing, beats its base by 19 percent." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<main class="wide">
+
+<section class="hero">
+  <div class="tag"><span class="glyph">◊</span> AI-Native Solutions · FallForge · owned, not rented</div>
+  <h1>Own the AI <em>you're renting.</em></h1>
+  <p class="lede">Bring me one job you do a lot. FallForge mints you a small model tuned to that task — proven cheaper and sharper than the frontier model you rent per token, running on <strong>your own hardware</strong>, with a signed receipt. If the receipt doesn't say it beats your baseline, <strong>you don't pay.</strong></p>
+  <div class="cta">
+    <a href="#contact" class="btn big">Get a free proof node →</a>
+    <a href="#how" class="btn ghost">See how it works</a>
+    <a href="index.html" class="btn ghost">Or install a whole business OS</a>
+  </div>
+</section>
+
+<section class="section">
+  <span class="eyebrow">The problem</span>
+  <h2>Renting intelligence <em>never stops billing.</em></h2>
+  <p class="lede">You're sending a repetitive task — triage, classification, extraction, routing — to a giant frontier model, over and over. Three things follow:</p>
+  <div class="grid grid-3" style="margin-top:22px">
+    <div class="card">
+      <h3 style="color:var(--forge)">You pay per token, forever</h3>
+      <p>Every call bills again. A task you run a million times a month is a bill that never stops and only grows.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--forge)">Your data leaves the building</h3>
+      <p>Every request goes to someone else's servers. For legal, health, finance and internal work, that's the whole problem.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--forge)">You can't prove it's any good</h3>
+      <p>The model's a black box you rent. No measurement, no receipt, no way to show it beats a cheaper option.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <span class="eyebrow">What FallForge does instead · four phases</span>
+  <h2>Mint it. <em>Prove it. Own it.</em></h2>
+  <p class="lede">A mutation-gated factory that mints owned models and proves them. For your task, it's four steps:</p>
+
+  <div class="phase">
+    <span class="n">1</span>
+    <h4>You name the task</h4>
+    <p>One repetitive thing you feed an LLM today — and a handful of example inputs and correct answers. That's all it takes to start.</p>
+  </div>
+  <div class="phase">
+    <span class="n">2</span>
+    <h4>FallForge mints an owned model</h4>
+    <p>A small base model, specialised to your task, baked into a model file you keep. No subscription, no lock-in — it's a file you own outright.</p>
+  </div>
+  <div class="phase">
+    <span class="n">3</span>
+    <h4>The gate proves it</h4>
+    <p>Your minted model is measured against its baseline on a held-out test set, deterministically. You get a <strong>signed receipt</strong>: beats baseline by X%, this much cheaper, this much faster.</p>
+  </div>
+  <div class="phase">
+    <span class="n">4</span>
+    <h4>You run it private</h4>
+    <p>On your own metal. Data never leaves. It borrows a bigger model only as a rare, budgeted fallback — never as the default.</p>
+  </div>
+
+  <div class="card forge" style="text-align:center;margin-top:22px">
+    <h2 style="color:var(--forge)">If the receipt doesn't say it beats your baseline, you don't pay.</h2>
+    <p>The measurement isn't an opinion — it's a deterministic gate that can, and does, return LOSES. That promise is only possible because the proof is objective. Nobody renting you a black box can make it.</p>
+  </div>
+</section>
+
+<section class="section">
+  <span class="eyebrow">This is already live · not a pitch deck</span>
+  <h2>Every claim is <em>checkable in your browser.</em></h2>
+  <p class="lede">The whole factory is built, public and mutation-gated. Six pieces, each one live right now:</p>
+  <div class="grid grid-3" style="margin-top:22px">
+    <a class="card" style="text-decoration:none" href="https://sjgant80-hub.github.io/fallforge-gate/" target="_blank"><h3 style="color:var(--forge)">the gate</h3><p>proves a model beats its baseline — receipts that can say LOSES</p></a>
+    <a class="card" style="text-decoration:none" href="https://sjgant80-hub.github.io/fallforge-mint/" target="_blank"><h3 style="color:var(--forge)">the mint</h3><p>forges an owned model, signs it end to end</p></a>
+    <a class="card" style="text-decoration:none" href="https://sjgant80-hub.github.io/fallnode/" target="_blank"><h3 style="color:var(--forge)">the runtime</h3><p>serves it private, on your metal</p></a>
+    <a class="card" style="text-decoration:none" href="https://sjgant80-hub.github.io/fallforge-catalogue/" target="_blank"><h3 style="color:var(--forge)">the shelf</h3><p>own-vs-rent maths on your real rates</p></a>
+    <a class="card" style="text-decoration:none" href="https://sjgant80-hub.github.io/fallforge-mesh/" target="_blank"><h3 style="color:var(--forge)">the mesh</h3><p>couple models so none — and no cloud — dominates</p></a>
+    <a class="card" style="text-decoration:none" href="https://sjgant80-hub.github.io/fallforge-factory/" target="_blank"><h3 style="color:var(--forge)">the factory</h3><p>all of it, one unbroken proof chain</p></a>
+  </div>
+  <div class="card" style="margin-top:16px;font-family:var(--mono);font-size:13.5px">
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:4px 0;border-bottom:1px dashed var(--line)"><span>a real minted node — <strong>triage-1b</strong> (support-ticket routing)</span><span style="color:var(--good);font-weight:700">BEATS its base · +19%</span></div>
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:4px 0;border-bottom:1px dashed var(--line)"><span>the same node, measured against a model 7× its size</span><span style="color:var(--bad);font-weight:700">LOSES · but 3× faster</span></div>
+    <div style="padding:6px 0;color:var(--dim)">— both receipts shipped. Honesty is the product: you always see the real number.</div>
+  </div>
+</section>
+
+<section class="section">
+  <span class="eyebrow">How it works to buy</span>
+  <h2>Start free. <em>Pay only after a receipt proves it.</em></h2>
+  <div class="grid grid-3" style="margin-top:22px">
+    <div class="card forge">
+      <h3 style="color:var(--forge)">Proof node · Free</h3>
+      <p style="color:var(--dim);font-size:13px">one task · one company</p>
+      <ul style="padding-left:20px;color:var(--cream);margin:12px 0 14px">
+        <li>I mint one node for <strong>one real task</strong> of yours</li>
+        <li>You get the <strong>signed receipt</strong> and the model file</li>
+        <li>In return: a short testimonial if it lands</li>
+        <li><strong>Zero cost, zero commitment</strong></li>
+      </ul>
+      <a href="#contact" class="btn">Claim the free node →</a>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--forge)">Minted node · Fixed fee</h3>
+      <p style="color:var(--dim);font-size:13px">per node, one-off</p>
+      <ul style="padding-left:20px;color:var(--cream);margin:12px 0 0">
+        <li>Mint + prove + deploy one owned node for a use-case</li>
+        <li>Signed receipt, model file, and a private runtime set up</li>
+        <li>You <strong>own it outright</strong> — no per-token bill, ever</li>
+        <li>Priced by task complexity, quoted before any work</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--forge)">Run it for you · Monthly</h3>
+      <p style="color:var(--dim);font-size:13px">retainer</p>
+      <ul style="padding-left:20px;color:var(--cream);margin:12px 0 0">
+        <li>I host, monitor and re-mint as your data drifts</li>
+        <li>Add new nodes as new tasks appear</li>
+        <li>Couple them into a private mesh that cross-checks itself</li>
+        <li>Your own sovereign AI stack, maintained</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="border-left:4px solid var(--forge);margin-top:16px;color:var(--dim)">
+    <strong style="color:var(--ink)">Not on the menu yet:</strong> anything regulated — legal advice, tax, medical, financial products. Those need proper counsel first, and I won't pretend otherwise. This is for the repetitive, high-volume, unregulated work you're overpaying to rent.
+  </div>
+</section>
+
+<section class="section" id="contact">
+  <span class="eyebrow">Bring me one task</span>
+  <h2>One repetitive thing <em>you feed an LLM.</em></h2>
+  <p class="lede">I'll mint you a proof node, free, and send you the receipt. If it's good, we talk. If it isn't, you've lost nothing and I've said so plainly.</p>
+  <div class="card forge" style="text-align:center;margin-top:18px">
+    <p style="font-family:var(--mono);font-size:1.05rem">📩 <strong><a href="mailto:sjgant80@gmail.com?subject=Mint%20me%20a%20proof%20node&body=Here's%20the%20repetitive%20task%20I%20want%20a%20model%20for%3A%0A%0A(a%20few%20example%20inputs%20and%20the%20correct%20answers%20help%20most)">sjgant80@gmail.com</a></strong></p>
+  </div>
+  <div class="cta" style="margin-top:18px">
+    <a href="index.html" class="btn ghost">Or forge a whole business OS →</a>
+  </div>
+</section>
+
+</main>
+
+<script defer src="assets/nav.js"></script>
+</body>
+</html>

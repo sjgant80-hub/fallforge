@@ -1,8 +1,12 @@
 # FallForge
 
-> The AI concierge installer for FallHub. Auto-detects a small business's vertical from its website, harvests the online footprint into a grounding kernel, packages a FallHub deployment with recommended modules, pre-configures the LLM router across five cost/quality blends, and hands the buyer a working AI-first operating system. Runs locally in the browser (sovereign) or via a hosted Cloudflare Worker (faster). Published by AI-Native Solutions. MIT. ◊·κ=1.
+> The forge for sovereign AI, two ways in. (1) Mint an owned small model for one repetitive task — proven against its baseline by a deterministic gate with a signed receipt, beats-your-baseline-or-you-don't-pay, running on your own hardware. (2) The AI concierge installer for FallHub: auto-detects a small business's vertical from its website, harvests the footprint into a grounding kernel, packages a FallHub deployment, pre-configures the LLM router across five cost/quality blends, and hands the buyer a working AI-first operating system. Sovereign AI you own and can prove, not rent. Published by AI-Native Solutions. MIT. ◊·κ=1.
 
-## What it is
+## Mint an owned model (own the AI you're renting)
+
+Bring one repetitive task (triage, classification, extraction, routing) and a few example inputs with correct answers. FallForge mints a small model specialised to that task, measures it against its baseline on a held-out set with a deterministic gate, and issues a signed receipt (beats baseline by X%, this much cheaper/faster — the gate can and does return LOSES). You own the model file and run it private. Free proof node for one task, then a fixed per-node fee, or a monthly retainer to run and re-mint it. Regulated work (legal/tax/medical/financial) is off the menu, counsel first. The whole factory is live and mutation-gated: the gate, the mint (fallforge-mint), the runtime (fallnode), the catalogue, the mesh, and fallforge-factory. Contact: mailto:sjgant80@gmail.com. Page: /mint.html.
+
+## What it is (the installer)
 
 FallForge turns "install your business OS" from a technical exercise into a 20-minute AI-driven concierge. The buyer answers three questions (business name, URL, vertical override) and watches five phases execute:
 

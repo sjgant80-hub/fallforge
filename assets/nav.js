@@ -3,6 +3,7 @@
   if (window.__ff_nav) return; window.__ff_nav = true;
   var here = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
   var pages = [
+    { href: 'mint.html',    label: 'Mint a model' },
     { href: 'install.html', label: 'Install now' },
     { href: 'how.html',     label: 'How it works' },
     { href: 'pricing.html', label: 'Pricing' },
@@ -24,7 +25,7 @@
 
   var ft = document.createElement('footer');
   ft.className = 'footer';
-  ft.innerHTML = '<span class="glyph">◊</span> · <strong style="color:var(--cream)">FallForge</strong> · concierge installer for <a href="https://sjgant80-hub.github.io/fallhub/">FallHub</a> · by <a href="https://www.ai-nativesolutions.com/">AI-Native Solutions</a> · <a href="install.html">Install</a> · <a href="how.html">How it works</a> · <a href="pricing.html">Pricing</a> · MIT · ◊·κ=1';
+  ft.innerHTML = '<span class="glyph">◊</span> · <strong style="color:var(--cream)">FallForge</strong> · the forge for sovereign AI · by <a href="https://www.ai-nativesolutions.com/">AI-Native Solutions</a> · <a href="mint.html">Mint a model</a> · <a href="install.html">Install</a> · <a href="how.html">How it works</a> · <a href="pricing.html">Pricing</a> · MIT · ◊·κ=1';
   document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(ft); });
   if (document.body && document.readyState !== 'loading') document.body.appendChild(ft);
 })();

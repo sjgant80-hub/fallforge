@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://sjgant80-hub.github.io/fallforge/</loc><lastmod>2026-07-10</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://sjgant80-hub.github.io/fallforge/llms.txt</loc><lastmod>2026-07-10</lastmod><priority>0.8</priority></url>
+  <url><loc>https://sjgant80-hub.github.io/fallforge/</loc><lastmod>2026-09-17</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://sjgant80-hub.github.io/fallforge/mint.html</loc><lastmod>2026-09-17</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://sjgant80-hub.github.io/fallforge/install.html</loc><lastmod>2026-09-17</lastmod><priority>0.9</priority></url>
+  <url><loc>https://sjgant80-hub.github.io/fallforge/how.html</loc><lastmod>2026-09-17</lastmod><priority>0.7</priority></url>
+  <url><loc>https://sjgant80-hub.github.io/fallforge/pricing.html</loc><lastmod>2026-09-17</lastmod><priority>0.7</priority></url>
+  <url><loc>https://sjgant80-hub.github.io/fallforge/llms.txt</loc><lastmod>2026-09-17</lastmod><priority>0.8</priority></url>
 </urlset>
