@@ -1,0 +1,12 @@
+[
+  {
+    "mutation": "< → <=",
+    "snippet": "for (let t = 16; t < 64; t++) {",
+    "reason": "Genuinely equivalent: the mutated bound runs one extra schedule iteration that writes w[64], out of bounds on the fixed Uint32Array(64) — typed-array OOB writes are silently discarded, the loop body has no other side effect, and nothing reads past w[63]. Behaviour is bit-identical; the FIPS vectors pass either way. Same argument as the identical vendored sha256 in fallforgecell/kernel.mjs, already reviewed there."
+  },
+  {
+    "mutation": "< → <=",
+    "snippet": "for (let i = 0; i < expectedReach.length; i++) { if (r.reach[i] !== expectedReach[i]) retu",
+    "reason": "Genuinely equivalent: this loop only runs after an explicit r.reach.length === expectedReach.length guard immediately above it, so the mutated bound only ever reaches one index PAST the shared length on both arrays. A JS array read past its length returns undefined on both sides, undefined !== undefined is false, so the extra iteration compares nothing and changes no outcome. No input can make this mutant observably diverge."
+  }
+]

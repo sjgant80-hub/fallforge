@@ -8,6 +8,6 @@
   "homepage": "https://sjgant80-hub.github.io/fallforge/",
   "main": "forge/forge.js",
   "scripts": {
-    "test": "node test.mjs"
+    "test": "node --test test.mjs kernel.test.mjs"
   }
 }

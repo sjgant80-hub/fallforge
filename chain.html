@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FallForge · The chain — is it actually converged?</title>
+<meta name="description" content="FallForge's provenance organ: walks the real hash chain from a minted manifest to a shelf listing to a served node or a Veridia audit, and says exactly where it breaks if it does. Composition by hash reference, not by merging code. Runs entirely in your browser.">
+<meta name="author" content="AI-Native Solutions">
+<meta name="theme-color" content="#0b0a0f">
+<meta property="og:title" content="FallForge · The chain — is it actually converged, or just claimed to be?">
+<meta property="og:description" content="Walks the real hash chain: mint manifest -> shelf listing -> served node or Veridia audit. Names exactly where it breaks. Runs in your browser.">
+<meta property="og:url" content="https://sjgant80-hub.github.io/fallforge/chain.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230b0a0f'/%3E%3Ctext x='16' y='22' font-family='serif' font-size='18' fill='%23d97a3d' text-anchor='middle'%3E%E2%97%8A%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+<style>
+  .chip{display:inline-block;padding:2px 9px;border-radius:8px;font-family:var(--mono);font-size:10.5px;background:var(--panel2);border:1px solid var(--line2);color:var(--dim);margin-right:6px}
+  .chip.ok{color:var(--good);border-color:rgba(107,157,111,.4)}
+  .chip.bad{color:var(--bad);border-color:rgba(199,90,74,.4)}
+  .linkrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+  .linkrow:first-child{border-top:none}
+  .verdict{font-family:var(--serif);font-size:1.3rem;padding:14px 18px;border-radius:12px;margin-bottom:16px}
+  .verdict.good{background:rgba(107,157,111,.10);color:var(--good);border:1px solid rgba(107,157,111,.3)}
+  .verdict.bad{background:rgba(199,90,74,.10);color:var(--bad);border:1px solid rgba(199,90,74,.3)}
+  textarea{width:100%;min-height:110px;background:var(--void2);border:1px solid var(--line2);border-radius:8px;color:var(--ink);font-family:var(--mono);font-size:12px;padding:10px}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<main class="wide">
+
+<section class="hero">
+  <div class="tag"><span class="glyph">◈</span> AI-Native Solutions · the hub</div>
+  <h1 style="font-family:var(--serif);font-size:2.1rem;color:var(--creamL);margin-bottom:18px">Is it actually converged, or just claimed to be?</h1>
+  <p class="lede">Mint (fallforgemint), the shelf (fallforge-catalogue), the runtime (fallnode) and Veridia (fallforgecell) each stay independent, live products with their own gate — nothing here merges their code. This organ composes them the other way: it walks the hashes each artifact declares about its neighbour and says, precisely, whether the chain from a minted manifest to a shelf listing to a served node or a Veridia audit is unbroken — and if not, exactly where it breaks. Runs entirely in your browser.</p>
+</section>
+
+<section class="section">
+  <span class="eyebrow">The walk</span>
+  <div class="grid grid-2" style="gap:14px;margin-bottom:18px">
+    <button class="btn" id="walkGood">Walk an unbroken chain →</button>
+    <button class="btn ghost" id="walkBroken">Walk a chain that’s broken →</button>
+  </div>
+  <div id="walkOut" class="card hidden"></div>
+  <p style="color:var(--dim);font-size:13px;margin-top:10px">Both demos use realistic example manifest/listing/ledger/department shapes — the same shapes <code>fallforgemint</code>, <code>fallforge-catalogue</code>, <code>fallnode</code> and Veridia’s kernels actually produce (proven against their real, current kernels before this page was built). Nothing here calls out to another domain.</p>
+</section>
+
+<section class="section">
+  <span class="eyebrow">Verify a provenance receipt</span>
+  <p style="color:var(--dim);margin-bottom:12px">Paste a <code>fallforge-provenance</code> receipt to re-check it offline — confirms nobody changed the verdict since it was issued.</p>
+  <textarea id="vPaste" placeholder="Paste the whole receipt JSON"></textarea>
+  <div style="margin-top:10px"><button class="btn ghost" id="vBtn">Check pasted receipt</button></div>
+  <div id="vOut" style="margin-top:12px"></div>
+</section>
+
+<section class="section">
+  <span class="eyebrow">Honest scope</span>
+  <p style="color:var(--dim)">This proves the <strong>links</strong> between already-gated artifacts are unbroken — the hash a downstream artifact declares about its neighbour actually matches. It does <strong>not</strong> re-derive that any one product’s own logic is correct; each product’s own mutation gate already proves that. <code>shelved</code> ≤ <code>served</code>/<code>audited</code> — a node can be minted and shelved with neither yet, and that is an honest state, not a failure.</p>
+</section>
+
+<footer style="padding:36px 0;color:var(--muted);font-size:13px">FallForge · the hub · composition by hash reference, not by merging code · by AI-Native Solutions · MIT</footer>
+</main>
+
+<script type="module">
+// ⟦KERNEL-BEGIN⟧ generated from kernel.mjs by make-page.mjs — do not edit here
+// fallforge · kernel.mjs — the hub: the provenance organ.
+//
+// Generalizes fallforge-factory's verifyProvenance to the CURRENT, shorter chain: a fallforgemint
+// manifest -> a catalogue listing -> served (fallnode's ledger) and/or audited (a Veridia department).
+// This is where the estate's convergence architecture actually composes: fallforgemint and fallforgecell
+// (Veridia) stay independent, live, untouched products, each with their own gate. This kernel never
+// imports their code and never re-derives their internal correctness — that is each product's own
+// mutation gate's job, already done. It only checks that the LINKS between already-gated artifacts are
+// not broken: the hash a downstream artifact declares about its neighbour actually matches that
+// neighbour's own, self-carried hash. Composition by reference, not by merger — six repos in this family
+// already vendor their own sha256/canon rather than share one module, on purpose, so each stays a
+// genuinely self-contained page; this kernel follows the same rule for the same reason.
+//
+// Pure, total, no I/O: garbage in -> { ok:false, why }, never a throw. A broken chain is a VERDICT
+// (intact:false, brokenAt named), not a refusal — refuse only when the input is too malformed to
+// attempt the walk at all.
+
+const isStr = (v) => typeof v === 'string';
+const isObj = (v) => typeof v === 'object' && v !== null && !Array.isArray(v);
+const HEX = /^[0-9a-f]+$/;
+const isHash = (v) => isStr(v) && v.length === 64 && HEX.test(v);
+
+// ── SHA-256 + canonical JSON (vendored verbatim — see kernel.mjs comment in every sibling repo for why) ──
+const K256 = new Uint32Array([
+  0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+  0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+  0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+  0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+  0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+  0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+  0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+  0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
+]);
+
+function sha256(text) {
+  if (!isStr(text)) return { ok: false, why: 'sha256 takes a string' };
+  const data = new TextEncoder().encode(text);
+  const len = data.length;
+  const padded = new Uint8Array((((len + 8) >> 6) << 6) + 64);
+  padded.set(data);
+  padded[len] = 0x80;
+  const dv = new DataView(padded.buffer);
+  const bitLen = len * 8;
+  dv.setUint32(padded.length - 8, Math.floor(bitLen / 4294967296));
+  dv.setUint32(padded.length - 4, bitLen >>> 0);
+  let h0 = 0x6a09e667, h1 = 0xbb67ae85, h2 = 0x3c6ef372, h3 = 0xa54ff53a;
+  let h4 = 0x510e527f, h5 = 0x9b05688c, h6 = 0x1f83d9ab, h7 = 0x5be0cd19;
+  const w = new Uint32Array(64);
+  for (let i = 0; i < padded.length; i += 64) {
+    for (let t = 0; t < 16; t++) w[t] = dv.getUint32(i + t * 4);
+    for (let t = 16; t < 64; t++) {
+      const x = w[t - 15], y = w[t - 2];
+      const s0 = (((x >>> 7) | (x << 25)) ^ ((x >>> 18) | (x << 14)) ^ (x >>> 3)) >>> 0;
+      const s1 = (((y >>> 17) | (y << 15)) ^ ((y >>> 19) | (y << 13)) ^ (y >>> 10)) >>> 0;
+      w[t] = (w[t - 16] + s0 + w[t - 7] + s1) >>> 0;
+    }
+    let a = h0, b = h1, c = h2, d = h3, e = h4, f = h5, g = h6, hh = h7;
+    for (let t = 0; t < 64; t++) {
+      const S1 = (((e >>> 6) | (e << 26)) ^ ((e >>> 11) | (e << 21)) ^ ((e >>> 25) | (e << 7))) >>> 0;
+      const ch = ((e & f) ^ (~e & g)) >>> 0;
+      const t1 = (hh + S1 + ch + K256[t] + w[t]) >>> 0;
+      const S0 = (((a >>> 2) | (a << 30)) ^ ((a >>> 13) | (a << 19)) ^ ((a >>> 22) | (a << 10))) >>> 0;
+      const maj = ((a & b) ^ (a & c) ^ (b & c)) >>> 0;
+      const t2 = (S0 + maj) >>> 0;
+      hh = g; g = f; f = e; e = (d + t1) >>> 0; d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+    }
+    h0 = (h0 + a) >>> 0; h1 = (h1 + b) >>> 0; h2 = (h2 + c) >>> 0; h3 = (h3 + d) >>> 0;
+    h4 = (h4 + e) >>> 0; h5 = (h5 + f) >>> 0; h6 = (h6 + g) >>> 0; h7 = (h7 + hh) >>> 0;
+  }
+  const hex = (n) => n.toString(16).padStart(8, '0');
+  return { ok: true, hash: hex(h0) + hex(h1) + hex(h2) + hex(h3) + hex(h4) + hex(h5) + hex(h6) + hex(h7) };
+}
+
+function canon(v) {
+  if (v === null || typeof v === 'number' || typeof v === 'boolean') return JSON.stringify(v);
+  if (typeof v === 'string') return JSON.stringify(v);
+  if (Array.isArray(v)) return '[' + v.map(canon).join(',') + ']';
+  if (typeof v === 'object') return '{' + Object.keys(v).sort().map((k) => JSON.stringify(k) + ':' + canon(v[k])).join(',') + '}';
+  return '"?"';
+}
+
+// ── THE CHAIN ──────────────────────────────────────────────────────────────────────────────────────
+// mint -> catalogue is always checked (a listing must exist and point at the manifest). served and
+// audited are each OPTIONAL and checked only when supplied — a node can be minted+shelved with
+// neither yet (an honest "not in use" state, not a failure), served only, audited only, or both.
+const REACH = Object.freeze(['shelved', 'served', 'audited']);
+
+function provenanceChain(input) {
+  if (!isObj(input)) return { ok: false, why: 'provenanceChain takes an object' };
+  const node = input.node;
+  const manifest = input.manifest;
+  const listing = input.listing;
+  const served = input.served;
+  const audited = input.audited;
+  if (!isStr(node)) return { ok: false, why: 'provenance needs a node name' };
+  if (node.trim().length === 0) return { ok: false, why: 'provenance needs a non-empty node name' };
+  if (!isObj(manifest)) return { ok: false, why: 'provenance needs a mint manifest' };
+  if (!isHash(manifest.hash)) return { ok: false, why: 'the manifest needs its own 64-hex hash' };
+  if (!isObj(listing)) return { ok: false, why: 'provenance needs a catalogue listing' };
+  if (!isHash(listing.manifestHash)) return { ok: false, why: 'the listing needs a 64-hex manifestHash' };
+  if (!isStr(listing.node)) return { ok: false, why: 'the listing needs a node name' };
+  const hasServed = served !== undefined && served !== null;
+  if (hasServed) {
+    if (!isObj(served)) return { ok: false, why: 'served must be an object carrying a ledger' };
+    if (!Array.isArray(served.ledger)) return { ok: false, why: 'served.ledger must be an array' };
+  }
+  const hasAudited = audited !== undefined && audited !== null;
+  if (hasAudited) {
+    if (!isObj(audited)) return { ok: false, why: 'audited must be an object carrying a department and receipts' };
+    if (!isObj(audited.department)) return { ok: false, why: 'audited needs a department' };
+    if (!isHash(audited.department.hash)) return { ok: false, why: "the department needs its own 64-hex hash" };
+    if (!Array.isArray(audited.department.units)) return { ok: false, why: 'the department needs a units array' };
+    if (!Array.isArray(audited.receipts)) return { ok: false, why: 'audited.receipts must be an array' };
+  }
+
+  const links = [];
+  const reach = ['shelved'];   // a valid manifest+listing is always the floor once link 1 holds
+
+  // link 1 · mint -> catalogue: the listing points at exactly this manifest, for exactly this node
+  const listingMatchesHash = listing.manifestHash === manifest.hash;
+  const listingMatchesNode = listing.node === node;
+  const link1ok = listingMatchesHash && listingMatchesNode;
+  links.push({ link: 'mint→catalogue', ok: link1ok, of: 'the catalogue listing carries this manifest hash and node' });
+  if (!link1ok) return { ok: true, intact: false, node, brokenAt: 'mint→catalogue', links, reach: [], why: 'the listing does not point at this manifest — the shelf lists a different build' };
+
+  // link 2 (optional) · catalogue -> served: fallnode's ledger carries a 'serve' entry for this exact
+  // manifest hash and node — the same binding fallnode itself writes as its FIRST ledger entry at boot
+  if (hasServed) {
+    const serveEntry = served.ledger.find((e) => isObj(e) && isObj(e.entry) && e.entry.act === 'serve');
+    const servedOk = Boolean(serveEntry) && serveEntry.entry.node === node && serveEntry.entry.manifestHash === manifest.hash;
+    links.push({ link: 'catalogue→served', ok: servedOk, of: "fallnode's ledger carries a serve entry for this manifest and node" });
+    if (!servedOk) return { ok: true, intact: false, node, brokenAt: 'catalogue→served', links, reach: reach.slice(), why: 'no ledger entry serves this manifest — the running node is not the shelved one' };
+    reach.push('served');
+  }
+
+  // link 3 (optional) · catalogue -> audited: a Veridia department, bound to this manifest through one
+  // of its REAL unit receipts carrying taskHash === manifest.hash (Veridia's own field for "what task
+  // was this cross-check about" — used as the binding, not a new field grafted onto Veridia's kernel)
+  if (hasAudited) {
+    const boundReceipt = audited.receipts.find((r) => isObj(r) && r.taskHash === manifest.hash);
+    const boundHash = boundReceipt && isStr(boundReceipt.hash) ? boundReceipt.hash : null;
+    const inDepartment = boundHash !== null && audited.department.units.some((u) => isObj(u) && u.receiptHash === boundHash);
+    const auditedOk = Boolean(boundReceipt) && inDepartment;
+    links.push({ link: 'catalogue→audited', ok: auditedOk, of: "a Veridia department unit carries taskHash equal to this manifest's hash" });
+    if (!auditedOk) return { ok: true, intact: false, node, brokenAt: 'catalogue→audited', links, reach: reach.slice(), why: 'no department unit is bound to this manifest — the audit is not of the shelved build' };
+    reach.push('audited');
+  }
+
+  return { ok: true, intact: true, node, brokenAt: null, links, reach, why: reach.length > 1 ? 'unbroken: the shelf lists exactly what was minted, and ' + reach.slice(1).join(' and ') + ' matches it' : 'unbroken: the shelf lists exactly what was minted — not yet served or audited' };
+}
+
+/** provenanceReceipt(input) — wraps one chain-walk into a tamper-evident, signable record. */
+function provenanceReceipt(input) {
+  if (!isObj(input)) return { ok: false, why: 'provenanceReceipt takes an object' };
+  const createdAt = input.createdAt;
+  if (!isStr(createdAt)) return { ok: false, why: 'the receipt needs a createdAt timestamp' };
+  if (createdAt.length === 0) return { ok: false, why: 'the receipt needs a non-empty createdAt timestamp' };
+  const walk = provenanceChain(input);
+  if (!walk.ok) return walk;
+  const body = {
+    v: 1,
+    kind: 'fallforge-provenance',
+    node: walk.node,
+    manifestHash: input.manifest.hash,
+    intact: walk.intact,
+    brokenAt: walk.brokenAt,
+    links: walk.links,
+    reach: walk.reach,
+    createdAt,
+    scope: 'Checks that the hashes artifacts declare about their neighbours match those neighbours’ own, self-carried hashes — mint→catalogue always, served/audited only when supplied. It proves the chain of custody is unbroken between already-gated products, not that any one product’s own logic is correct — each product’s own mutation gate already proves that.',
+  };
+  const h = sha256(canon(body));
+  if (!h.ok) return { ok: false, why: h.why };
+  return { ok: true, receipt: { ...body, hash: h.hash } };
+}
+
+/** provenanceSignable(receipt) — the exact canonical bytes an Ed25519 signature covers (minus signature). */
+function provenanceSignable(receipt) {
+  if (!isObj(receipt)) return { ok: false, why: 'not a fallforge provenance receipt' };
+  if (receipt.kind !== 'fallforge-provenance') return { ok: false, why: 'not a fallforge provenance receipt' };
+  if (!isHash(receipt.hash)) return { ok: false, why: 'the receipt has no hash' };
+  const body = { ...receipt };
+  delete body.signature;
+  return { ok: true, payload: canon(body) };
+}
+
+/** verifyProvenanceReceipt(r) — matches its own hash AND intact/reach are consistent with its own links. */
+function verifyProvenanceReceipt(r) {
+  if (!isObj(r)) return { ok: false, why: 'not a fallforge provenance receipt' };
+  if (r.kind !== 'fallforge-provenance') return { ok: false, why: 'not a fallforge provenance receipt' };
+  if (!isHash(r.hash)) return { ok: false, why: 'the receipt has no hash' };
+  const body = { ...r };
+  delete body.hash;
+  delete body.signature;
+  const h = sha256(canon(body));
+  if (!h.ok) return { ok: false, why: h.why };
+  if (h.hash !== r.hash) return { ok: true, valid: false, why: 'the receipt does not match its own fingerprint — it was changed after it was issued' };
+  if (!Array.isArray(r.links)) return { ok: true, valid: false, why: 'the receipt has no links record' };
+  if (!Array.isArray(r.reach)) return { ok: true, valid: false, why: 'the receipt has no reach record' };
+  // intact must equal "every recorded link is ok" — a receipt claiming intact over a broken link is a lie
+  let allOk = true;
+  for (const l of r.links) { if (!isObj(l) || l.ok !== true) { allOk = false; break; } }
+  if (r.intact !== allOk) return { ok: true, valid: false, why: 'the receipt’s intact flag does not match its own links' };
+  // reach must have exactly one entry per checked link plus the floor, in order, when intact
+  if (r.intact) {
+    const expectedReach = ['shelved', ...r.links.filter((l) => l.link !== 'mint→catalogue').map((l) => (l.link === 'catalogue→served' ? 'served' : 'audited'))];
+    if (r.reach.length !== expectedReach.length) return { ok: true, valid: false, why: 'the receipt’s reach does not match its own links' };
+    for (let i = 0; i < expectedReach.length; i++) { if (r.reach[i] !== expectedReach[i]) return { ok: true, valid: false, why: 'the receipt’s reach does not match its own links' }; }
+  }
+  return { ok: true, valid: true, why: 'provenance intact' };
+}
+// ⟦KERNEL-END⟧
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function exampleManifest(seed){ return { hash: sha256('manifest-' + seed).hash }; }
+function exampleListing(node, manifestHash){ return { node, manifestHash }; }
+function exampleServed(node, manifestHash){ return { ledger: [{ seq: 0, prevHash: 'GENESIS', hash: sha256('l0').hash, entry: { act: 'serve', node, manifestHash } }] }; }
+function exampleAudited(manifestHash){
+  const receiptHash = sha256('unit-receipt').hash;
+  return { department: { hash: sha256('dept').hash, units: [{ name: 'audit', receiptHash }] }, receipts: [{ taskHash: manifestHash, hash: receiptHash }] };
+}
+
+function render(walk){
+  const out = $('walkOut');
+  out.classList.remove('hidden');
+  let h = '<div class="verdict ' + (walk.intact ? 'good' : 'bad') + '">' + (walk.intact ? '✓ UNBROKEN' : '✗ BROKEN at ' + esc(walk.brokenAt)) + '</div>';
+  h += '<div class="kvline" style="margin-bottom:10px;color:var(--dim)">node: <b style="color:var(--creamL)">' + esc(walk.node) + '</b> · reach: ' + (walk.reach.length ? walk.reach.map((r) => '<span class="chip ok">' + esc(r) + '</span>').join('') : '<span class="chip bad">none</span>') + '</div>';
+  walk.links.forEach((l) => {
+    h += '<div class="linkrow"><span class="chip ' + (l.ok ? 'ok' : 'bad') + '">' + (l.ok ? '✓' : '✗') + ' ' + esc(l.link) + '</span><span style="color:var(--dim);font-size:13px">' + esc(l.of) + '</span></div>';
+  });
+  h += '<p style="margin-top:12px;color:var(--dim);font-size:13px">' + esc(walk.why) + '</p>';
+  out.innerHTML = h;
+  out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+$('walkGood').addEventListener('click', () => {
+  const node = 'triage-1b';
+  const manifest = exampleManifest('real');
+  const listing = exampleListing(node, manifest.hash);
+  const served = exampleServed(node, manifest.hash);
+  const audited = exampleAudited(manifest.hash);
+  render(provenanceChain({ node, manifest, listing, served, audited }));
+});
+$('walkBroken').addEventListener('click', () => {
+  const node = 'triage-1b';
+  const manifest = exampleManifest('real');
+  const decoyManifest = exampleManifest('a-different-build-entirely');
+  const listing = exampleListing(node, decoyManifest.hash);   // sealed against the WRONG build
+  render(provenanceChain({ node, manifest, listing }));
+});
+
+$('vBtn').addEventListener('click', () => {
+  const out = $('vOut');
+  let receipt;
+  try { receipt = JSON.parse($('vPaste').value); }
+  catch { out.innerHTML = '<span style="color:var(--bad)">✗ That is not valid JSON — paste the whole receipt.</span>'; return; }
+  const v = verifyProvenanceReceipt(receipt);
+  if (!v.ok) { out.innerHTML = '<span style="color:var(--bad)">✗ This is not a fallforge provenance receipt.</span>'; return; }
+  if (!v.valid) { out.innerHTML = '<span style="color:var(--bad)">✗ CHANGED — ' + esc(v.why) + '</span>'; return; }
+  out.innerHTML = '<span style="color:var(--good)">✓ GENUINE — intact: <b>' + esc(String(receipt.intact)) + '</b>, reach: ' + esc((receipt.reach || []).join(', ') || 'none') + '</span>';
+});
+</script>
+</body>
+</html>
