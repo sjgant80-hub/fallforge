@@ -50,5 +50,27 @@ for (const f of readdirSync('.')) {
   if (hit) { console.error(f + ' contains what looks like a live credential: ' + hit[1].slice(0, 12) + '…'); fail = 1; }
 }
 
+// 5. NO PRICING (Simon's standing rule: never, ever put pricing on the product) and
+// 6. the Konomi credit MUST be present (every product carries it). Scan all served source, skip tools/.
+const served = [];
+const walk = (dir) => {
+  for (const e of readdirSync(dir, { withFileTypes: true })) {
+    const p = dir === '.' ? e.name : dir + '/' + e.name;
+    if (e.isDirectory()) { if (!/^(\.git|node_modules|tools|\.github)$/.test(e.name)) walk(p); }
+    else if (/\.(html|js|mjs)$/.test(e.name)) served.push(p);
+  }
+};
+walk('.');
+const PRICE = /£\s?\d|\bmonthly_gbp\b|\bpricing\b|\bpriceCurrency\b|"@type"\s*:\s*"Offer"|\/mo\b|\bper\s+(seat|month|year|node)\b|\b\d+\s?(GBP|USD)\b/i;
+const KONOMI = 'powered by the Konomi architecture, created by Thomas Frumkin';
+let konomi = false;
+for (const p of served) {
+  const s = readFileSync(p, 'utf8');
+  const pm = s.match(PRICE);
+  if (pm) { console.error(p + ' contains PRICING (rule: never put pricing on the product): "' + pm[0] + '"'); fail = 1; }
+  if (s.includes(KONOMI)) konomi = true;
+}
+if (!konomi) { console.error('MISSING the Konomi credit — every product must carry: "' + KONOMI + '"'); fail = 1; }
+
 if (fail) { console.error('\nPAGE GATE FAILED'); process.exit(1); }
-console.log('page gate clean — ' + html.length + ' page(s): scripts parse, no placeholders, no dead same-repo links, no committed keys');
+console.log('page gate clean — ' + html.length + ' page(s): scripts parse, no placeholders, no dead links, no committed keys, NO PRICING, Konomi credit present');

@@ -32,7 +32,6 @@ export async function packageInstall({ kernel, verticalKey, blendKey, keys = {},
     vertical: verticalKey,
     fallhub_ref: 'https://github.com/sjgant80-hub/fallhub',
     blend: blend.key,
-    router_monthly_estimate: blend.monthly_gbp_range,
     modules_installed: modules,
     fresh_install: true,
     autonomy_default: 'watch'
@@ -118,7 +117,7 @@ function _generateReadme(name, verticalKey, blend, modules) {
 Forged by FallForge on top of FallHub. AI-Native Solutions substrate.
 
 - **Vertical:** ${verticalKey}
-- **Router blend:** ${blend.label} · monthly ${blend.monthly_gbp_range}
+- **Router blend:** ${blend.label}
 - **Modules installed:** ${modules.join(', ')}
 - **Autonomy default:** watch (slide up as trust grows)
 
@@ -165,7 +164,7 @@ ${modules.map(m => `- \`${m}\` — https://github.com/sjgant80-hub/${m}`).join('
 
 ## Step 4 · Configure the LLM router
 
-Your bundle uses the ${blend.label} blend (monthly estimate ${blend.monthly_gbp_range}).
+Your bundle uses the ${blend.label} blend.
 
 Paste the API keys for the providers in your bundle's kernel.json into \`autopilot.html\`:
 

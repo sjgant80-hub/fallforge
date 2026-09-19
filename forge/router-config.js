@@ -5,7 +5,6 @@ export const BLENDS = {
     key: 'fullFrontier',
     label: 'Full Frontier',
     tagline: 'Highest quality · everything on frontier LLM',
-    monthly_gbp_range: '£80–£300',
     routes: {
       discovery: { provider: 'anthropic', model: 'claude-opus-4-8' },
       harvest:   { provider: 'anthropic', model: 'claude-opus-4-8' },
@@ -18,7 +17,6 @@ export const BLENDS = {
     key: 'eighty20',
     label: '80/20 (default)',
     tagline: 'Frontier for reasoning · open-source for bulk',
-    monthly_gbp_range: '£20–£60',
     default: true,
     routes: {
       discovery: { provider: 'gemini',    model: 'gemini-2.5-pro' },
@@ -32,7 +30,6 @@ export const BLENDS = {
     key: 'fifty50',
     label: '50/50 blend',
     tagline: 'Balanced cost & quality',
-    monthly_gbp_range: '£8–£25',
     routes: {
       discovery: { provider: 'gemini', model: 'gemini-2.5-pro' },
       harvest:   { provider: 'groq',   model: 'llama-3.3-70b-versatile' },
@@ -45,7 +42,6 @@ export const BLENDS = {
     key: 'fullOpen',
     label: 'Full Open',
     tagline: 'Sovereign · fast · everything Llama',
-    monthly_gbp_range: '£4–£12',
     routes: {
       discovery: { provider: 'groq', model: 'llama-3.3-70b-versatile' },
       harvest:   { provider: 'groq', model: 'llama-3.3-70b-versatile' },
@@ -58,7 +54,6 @@ export const BLENDS = {
     key: 'local',
     label: 'Local-only (WebLLM)',
     tagline: 'Zero cost · zero servers · runs in browser',
-    monthly_gbp_range: '£0',
     routes: {
       discovery: { provider: 'webllm', model: 'Llama-3.1-8B-Instruct-q4f16_1-MLC' },
       harvest:   { provider: 'webllm', model: 'Llama-3.1-8B-Instruct-q4f16_1-MLC' },

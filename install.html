@@ -116,7 +116,7 @@ const state = { blendKey: 'eighty20', zipBlob: null };
 function renderBlends() {
   const el = $('blendPicker');
   el.innerHTML = Object.values(BLENDS).map(b =>
-    `<button data-key="${b.key}" title="${b.tagline}"><div>${b.label}</div><div style="opacity:0.7;font-size:9px;margin-top:2px">${b.monthly_gbp_range}</div></button>`
+    `<button data-key="${b.key}" title="${b.tagline}"><div>${b.label}</div></button>`
   ).join('');
   el.querySelectorAll('button').forEach(btn => {
     btn.onclick = () => {
@@ -124,7 +124,7 @@ function renderBlends() {
       el.querySelectorAll('button').forEach(b => b.classList.remove('on'));
       btn.classList.add('on');
       const b = BLENDS[btn.dataset.key];
-      $('blendTagline').textContent = b.tagline + ' · monthly ' + b.monthly_gbp_range;
+      $('blendTagline').textContent = b.tagline;
       updateKeyProviderHint(b);
     };
   });
@@ -231,7 +231,7 @@ function renderHandoff(r) {
     <ul style="padding-left:20px;color:var(--cream);margin-top:8px">
       <li><strong>Business:</strong> ${_esc(b.name)}</li>
       <li><strong>Vertical:</strong> ${_esc(b.vertical)}</li>
-      <li><strong>Router blend:</strong> ${_esc(r.blend.label)} · ${_esc(r.blend.monthly_gbp_range)}/month</li>
+      <li><strong>Router blend:</strong> ${_esc(r.blend.label)}</li>
       <li><strong>Modules recommended:</strong> ${b.modules_installed.join(', ')}</li>
       <li><strong>Autonomy default:</strong> ${b.autonomy_default}</li>
     </ul>
