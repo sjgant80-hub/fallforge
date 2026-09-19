@@ -3,26 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FallForge · The chain — is it actually converged?</title>
-<meta name="description" content="FallForge's provenance organ: walks the real hash chain from a minted manifest to a shelf listing to a served node or a Veridia audit, and says exactly where it breaks if it does. Composition by hash reference, not by merging code. Runs entirely in your browser.">
+<title>FallForge · Trust &amp; compliance</title>
+<meta name="description" content="FallForge's privacy notice, AI transparency notice, and acceptable-use scope limits — working drafts, not legal advice, counsel review pending. Plus a heuristic risk self-check and the honest posture of what's actually published.">
 <meta name="author" content="AI-Native Solutions">
 <meta name="theme-color" content="#0b0a0f">
-<meta property="og:title" content="FallForge · The chain — is it actually converged, or just claimed to be?">
-<meta property="og:description" content="Walks the real hash chain: mint manifest -> shelf listing -> served node or Veridia audit. Names exactly where it breaks. Runs in your browser.">
-<meta property="og:url" content="https://sjgant80-hub.github.io/fallforge/chain.html">
+<meta property="og:title" content="FallForge · Trust &amp; compliance">
+<meta property="og:url" content="https://sjgant80-hub.github.io/fallforge/compliance.html">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230b0a0f'/%3E%3Ctext x='16' y='22' font-family='serif' font-size='18' fill='%23d97a3d' text-anchor='middle'%3E%E2%97%8A%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/theme.css">
 <style>
-  .chip{display:inline-block;padding:2px 9px;border-radius:8px;font-family:var(--mono);font-size:10.5px;background:var(--panel2);border:1px solid var(--line2);color:var(--dim);margin-right:6px}
-  .chip.ok{color:var(--good);border-color:rgba(107,157,111,.4)}
-  .chip.bad{color:var(--bad);border-color:rgba(199,90,74,.4)}
-  .linkrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
-  .linkrow:first-child{border-top:none}
-  .verdict{font-family:var(--serif);font-size:1.3rem;padding:14px 18px;border-radius:12px;margin-bottom:16px}
-  .verdict.good{background:rgba(107,157,111,.10);color:var(--good);border:1px solid rgba(107,157,111,.3)}
-  .verdict.bad{background:rgba(199,90,74,.10);color:var(--bad);border:1px solid rgba(199,90,74,.3)}
-  textarea{width:100%;min-height:110px;background:var(--void2);border:1px solid var(--line2);border-radius:8px;color:var(--ink);font-family:var(--mono);font-size:12px;padding:10px}
+  .banner{background:rgba(212,168,61,.10);border:1px solid rgba(212,168,61,.35);color:var(--warn);border-radius:10px;padding:14px 18px;font-size:14px;margin-bottom:26px}
+  .verify{color:var(--warn);font-family:var(--mono);font-size:11px;letter-spacing:.04em}
+  table.reg{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0}
+  table.reg th,table.reg td{border-top:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--dim)}
+  table.reg th{color:var(--creamL);font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em}
+  .verdict{font-family:var(--serif);font-size:1.25rem;padding:12px 16px;border-radius:12px;margin-bottom:12px}
+  .verdict.warn{background:rgba(212,168,61,.10);color:var(--warn);border:1px solid rgba(212,168,61,.3)}
+  .verdict.dim{background:var(--panel2);color:var(--dim);border:1px solid var(--line2)}
+  .bar{height:8px;border-radius:5px;background:var(--panel2);overflow:hidden;margin:10px 0}
+  .bar > div{height:100%;background:var(--brass2)}
+  textarea{width:100%;min-height:80px;background:var(--void2);border:1px solid var(--line2);border-radius:8px;color:var(--ink);font-family:var(--mono);font-size:12px;padding:10px}
   .hidden{display:none}
 </style>
 </head>
@@ -30,52 +31,83 @@
 <main class="wide">
 
 <section class="hero">
-  <div class="tag"><span class="glyph">◈</span> AI-Native Solutions · the hub</div>
-  <h1 style="font-family:var(--serif);font-size:2.1rem;color:var(--creamL);margin-bottom:18px">Is it actually converged, or just claimed to be?</h1>
-  <p class="lede">Mint (fallforgemint), the shelf (fallforge-catalogue), the runtime (fallnode) and Veridia (fallforgecell) each stay independent, live products with their own gate — nothing here merges their code. This organ composes them the other way: it walks the hashes each artifact declares about its neighbour and says, precisely, whether the chain from a minted manifest to a shelf listing to a served node or a Veridia audit is unbroken — and if not, exactly where it breaks. Runs entirely in your browser.</p>
+  <div class="tag"><span class="glyph">◈</span> AI-Native Solutions · trust &amp; compliance</div>
+  <h1 style="font-family:var(--serif);font-size:2rem;color:var(--creamL);margin-bottom:16px">What FallForge does with your data, and what it doesn’t claim.</h1>
+  <div class="banner">⚠️ This page is a working draft, not legal advice and not a compliance certification. Every assertion on it must be reviewed and signed off by a qualified UK/EU data-protection + AI-Act adviser before it is relied on. Items marked <span class="verify">[VERIFY]</span> depend on how the business is actually run.</div>
 </section>
 
 <section class="section">
-  <span class="eyebrow">The walk</span>
-  <div class="grid grid-2" style="gap:14px;margin-bottom:18px">
-    <button class="btn" id="walkGood">Walk an unbroken chain →</button>
-    <button class="btn ghost" id="walkBroken">Walk a chain that’s broken →</button>
+  <span class="eyebrow">0 · The honest posture</span>
+  <h2 style="font-family:var(--serif);font-size:1.4rem;color:var(--creamL);margin-bottom:10px">Why the architecture starts strong</h2>
+  <p class="lede" style="font-size:15px">FallForge’s free tier runs <strong>client-side and offline</strong>: the task, the examples, and the minted model stay in your browser and on your own machine, via Ollama. AI-Native Solutions does <strong>not</strong> receive, store, or transmit that data. That makes the product’s compute privacy-by-design (UK GDPR Art 25) and data-minimising (Art 5) by construction. The compliance work is mostly about the <strong>business around</strong> the tool — the website, enquiries, the done-for-you tier — not the tool’s core.</p>
+</section>
+
+<section class="section">
+  <span class="eyebrow">1 · Privacy Notice (UK GDPR)</span>
+  <p style="color:var(--dim)"><strong>Who we are.</strong> AI-Native Solutions (“we”) is the data controller for personal data described here. Contact: sjgant80@gmail.com. <span class="verify">[VERIFY: registered legal entity name/address; ICO data-protection-fee registration — likely required if you process personal data.]</span></p>
+  <p style="color:var(--dim);margin-top:10px"><strong>What the FallForge tool does with your data.</strong> When you mint or evaluate a model on the free tool, your task, examples and the resulting model are processed <strong>entirely in your own browser and on your own device</strong>. We do not receive them, see them, or store them. Nothing is uploaded to us.</p>
+  <table class="reg"><thead><tr><th>Data</th><th>When</th><th>Purpose</th><th>Lawful basis (Art 6)</th></tr></thead><tbody>
+    <tr><td>Your name, email, message</td><td>You email or DM us / request a proof node</td><td>Reply to and manage your enquiry</td><td>Legitimate interests</td></tr>
+    <tr><td>Contact details you submit</td><td>You join a mailing list</td><td>Send you updates you asked for</td><td>Consent</td></tr>
+    <tr><td>Data in a “done-for-you” engagement</td><td>You hire us to mint/tune for you</td><td>Deliver the paid service</td><td>Contract (+ a processor agreement)</td></tr>
+    <tr><td>Website analytics <span class="verify">[VERIFY: do you run any?]</span></td><td>You visit the site</td><td>Understand usage</td><td>Consent (if non-essential)</td></tr>
+  </tbody></table>
+  <p style="color:var(--dim)"><strong>Cookies / PECR.</strong> We use no tracking or advertising cookies. <span class="verify">[VERIFY as the site evolves — if analytics or embeds are added, a consent banner is required under PECR.]</span></p>
+  <p style="color:var(--dim);margin-top:10px"><strong>Retention.</strong> Enquiries kept no longer than needed to handle them and any follow-up <span class="verify">[VERIFY: set a period, e.g. 24 months]</span>; mailing-list data until you unsubscribe; done-for-you data per the engagement contract.</p>
+  <p style="color:var(--dim);margin-top:10px"><strong>Your rights.</strong> You can request access, rectification, erasure, restriction, portability, and object to processing. To exercise any right, email sjgant80@gmail.com; we respond within one month. You can complain to the ICO (ico.org.uk).</p>
+  <p style="color:var(--dim);margin-top:10px"><strong>International transfers.</strong> The tool needs none (it runs locally). For business email/records <span class="verify">[VERIFY: your email/host provider and its transfer safeguards]</span>.</p>
+</section>
+
+<section class="section">
+  <span class="eyebrow">2 · AI Transparency Notice</span>
+  <p style="color:var(--dim)">FallForge is a tool for <strong>creating and evaluating small, task-specific language models</strong>. Please note:</p>
+  <ul style="color:var(--dim);margin:10px 0 0 20px;line-height:1.8">
+    <li>Outputs are <strong>AI-generated and probabilistic</strong> — they can be wrong. Keep a human in the loop for anything that matters.</li>
+    <li>The signed <strong>scorecard receipt</strong> attests <strong>measured performance on your own held-out examples</strong> at a point in time. It is evidence the model <strong>beat a baseline on that sample</strong> — <strong>not</strong> a guarantee of correctness, truth, or fitness for any particular purpose.</li>
+    <li><strong>The model is yours.</strong> Once minted it runs on your machine under your control; you are responsible for how you use it.</li>
+    <li>Sample sizes are shown honestly, and a receipt can and will read <strong>LOSES</strong> or <strong>TIES</strong>.</li>
+  </ul>
+</section>
+
+<section class="section">
+  <span class="eyebrow">3 · Acceptable Use &amp; Scope Limits (EU AI Act–aware)</span>
+  <p style="color:var(--dim)">By using FallForge you agree <strong>not</strong> to use it to build or operate:</p>
+  <ul style="color:var(--dim);margin:10px 0 0 20px;line-height:1.8">
+    <li>Any <strong>prohibited AI practice</strong> under the EU AI Act (Art 5) — e.g. social scoring, manipulative or exploitative systems, untargeted facial-image scraping, real-time remote biometric ID in public spaces.</li>
+    <li>Any <strong>high-risk system</strong> (EU AI Act Annex III — biometrics, critical infrastructure, education/vocational selection, <strong>employment/recruitment</strong>, essential private &amp; public services <strong>including creditworthiness</strong>, law enforcement, migration, administration of justice) <strong>without conducting your own conformity assessment and meeting your obligations as the deployer/provider.</strong></li>
+    <li>Anything unlawful, infringing, or harmful.</li>
+  </ul>
+  <p style="color:var(--dim);margin-top:10px"><strong>You are the controller/deployer</strong> for any personal data you process, and for any AI system you build with FallForge. FallForge is a general-purpose tool; the risk classification and the legal obligations attach to <strong>your use</strong>, not to the tool as delivered.</p>
+
+  <div style="margin-top:22px">
+    <span class="eyebrow">Try the self-check</span>
+    <p style="color:var(--dim);margin-bottom:10px">Describe what you want to build. This is a heuristic pre-screen against the categories above — not a legal determination, and not a substitute for your own conformity assessment.</p>
+    <textarea id="riskText" placeholder="e.g. a chatbot that answers support tickets"></textarea>
+    <div style="margin-top:10px"><button class="btn ghost" id="riskBtn">Check against Article 5 / Annex III →</button></div>
+    <div id="riskOut" style="margin-top:12px"></div>
   </div>
-  <div id="walkOut" class="card hidden"></div>
-  <p style="color:var(--dim);font-size:13px;margin-top:10px">Both demos use realistic example manifest/listing/ledger/department shapes — the same shapes <code>fallforgemint</code>, <code>fallforge-catalogue</code>, <code>fallnode</code> and Veridia’s kernels actually produce (proven against their real, current kernels before this page was built). Nothing here calls out to another domain.</p>
 </section>
 
 <section class="section">
-  <span class="eyebrow">Verify a provenance receipt</span>
-  <p style="color:var(--dim);margin-bottom:12px">Paste a <code>fallforge-provenance</code> receipt to re-check it offline — confirms nobody changed the verdict since it was issued.</p>
-  <textarea id="vPaste" placeholder="Paste the whole receipt JSON"></textarea>
-  <div style="margin-top:10px"><button class="btn ghost" id="vBtn">Check pasted receipt</button></div>
-  <div id="vOut" style="margin-top:12px"></div>
-</section>
+  <span class="eyebrow">4 · EU AI Act positioning <span class="verify">(internal note → counsel)</span></span>
+  <p style="color:var(--dim)"><strong>What FallForge is:</strong> a tool to author and evaluate <strong>narrow, few-shot, task-specific</strong> models. As delivered it is best read as <strong>minimal-risk</strong>, and it is <strong>not</strong> a general-purpose AI model (GPAI) provider — users are not training foundation models. <span class="verify">[VERIFY with counsel]</span></p>
+  <p style="color:var(--dim);margin-top:10px"><strong>Where obligations land:</strong> on the <strong>deployer</strong> when a user puts a model into a high-risk context. FallForge helps them meet those obligations rather than creating them — the <strong>signed receipts + Veridia audit trail</strong> (see below) map onto the Act’s <strong>record-keeping/logging (Art 12)</strong> and <strong>technical-documentation/traceability</strong> expectations, and support <strong>human oversight</strong>. This is a feature to lean on in the market, positioned honestly, never as a compliance guarantee.</p>
+  <p style="color:var(--dim);margin-top:10px"><strong>Timing:</strong> the Act is in force and applies in <strong>phases</strong>. <span class="verify">[VERIFY the current phase and any dated obligations with counsel — deliberately not stated here as a fixed date, because a compliance page with a stale date is worse than one that points you to check.]</span></p>
 
-<section class="section">
-  <span class="eyebrow">Coupling health &amp; the shared frontier budget</span>
-  <h2 style="font-family:var(--serif);font-size:1.5rem;color:var(--creamL);margin-bottom:10px">Two nodes that always agree aren’t checking each other.</h2>
-  <p class="lede" style="font-size:15px;margin-bottom:16px">Once there’s more than one served node, two more questions matter: is a pair of nodes <em>soundly</em> coupled — balanced, and disagreeing sometimes — or is one carrying the other, or are they just correlated (a merged pair that always agrees proves nothing)? And when several nodes share one frontier fallback, has any single node drained the budget on everyone’s behalf?</p>
-  <div class="grid grid-3" style="gap:12px;margin-bottom:14px">
-    <button class="btn ghost" id="coupleSov">Demo: a sound couple</button>
-    <button class="btn ghost" id="coupleMerged">Demo: a merged (correlated) pair</button>
-    <button class="btn ghost" id="coupleExtractive">Demo: a lopsided pair</button>
+  <div style="margin-top:20px">
+    <span class="eyebrow">The accountability artifact, live</span>
+    <p style="color:var(--dim)">Every FallForge mint, shelf listing, and hub receipt is content-hashed and re-verifiable offline — that <em>is</em> the record. The <a href="chain.html">provenance organ</a> walks the real chain from a minted manifest through the shelf to a served node or a Veridia audit and names exactly where it breaks, if it does. That chain is the traceability artifact this section points to — not a separate logging system bolted on afterward.</p>
   </div>
-  <div id="coupleOut" class="card hidden" style="margin-bottom:18px"></div>
-  <div class="grid grid-2" style="gap:12px">
-    <button class="btn ghost" id="budgetOk">Demo: within the shared budget</button>
-    <button class="btn ghost" id="budgetSpent">Demo: budget already spent</button>
-  </div>
-  <div id="budgetOut" class="card hidden" style="margin-top:14px"></div>
 </section>
 
 <section class="section">
-  <span class="eyebrow">Honest scope</span>
-  <p style="color:var(--dim)">This proves the <strong>links</strong> between already-gated artifacts are unbroken — the hash a downstream artifact declares about its neighbour actually matches. It does <strong>not</strong> re-derive that any one product’s own logic is correct; each product’s own mutation gate already proves that. <code>shelved</code> ≤ <code>served</code>/<code>audited</code> — a node can be minted and shelved with neither yet, and that is an honest state, not a failure.</p>
+  <span class="eyebrow">5 · Compliance checklist</span>
+  <p style="color:var(--dim);margin-bottom:6px"><strong>Built-in strengths (architecture already gives these):</strong> privacy-by-design + data-minimisation (offline, zero-backend, nothing uploaded); an accountability/audit trail (signed scorecards + Veridia audit receipts); no tracking cookies.</p>
+  <p style="color:var(--dim);margin:10px 0 6px"><strong style="color:var(--bad)">Needs counsel / a human decision (not self-certified here):</strong> any public “GDPR-compliant / EU-AI-Act-compliant” claim; ICO data-protection-fee registration <span class="verify">[VERIFY]</span>; the done-for-you processor agreement + Record of Processing (Art 30); final legal review of every notice on this page; regulated verticals (legal/financial/medical) stay behind counsel.</p>
+  <div id="postureOut" style="margin-top:16px"></div>
 </section>
 
-<footer style="padding:36px 0;color:var(--muted);font-size:13px">FallForge · the hub · composition by hash reference, not by merging code · by AI-Native Solutions · MIT</footer>
+<footer style="padding:36px 0;color:var(--muted);font-size:13px">FallForge · trust &amp; compliance · draft prepared to make the organ concrete; the last mile is a lawyer’s signature, not the code’s · by AI-Native Solutions · MIT</footer>
 </main>
 
 <script type="module">
@@ -500,75 +532,28 @@ function verifyCompliancePostureReceipt(r) {
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-function exampleManifest(seed){ return { hash: sha256('manifest-' + seed).hash }; }
-function exampleListing(node, manifestHash){ return { node, manifestHash }; }
-function exampleServed(node, manifestHash){ return { ledger: [{ seq: 0, prevHash: 'GENESIS', hash: sha256('l0').hash, entry: { act: 'serve', node, manifestHash } }] }; }
-function exampleAudited(manifestHash){
-  const receiptHash = sha256('unit-receipt').hash;
-  return { department: { hash: sha256('dept').hash, units: [{ name: 'audit', receiptHash }] }, receipts: [{ taskHash: manifestHash, hash: receiptHash }] };
-}
-
-function render(walk){
-  const out = $('walkOut');
-  out.classList.remove('hidden');
-  let h = '<div class="verdict ' + (walk.intact ? 'good' : 'bad') + '">' + (walk.intact ? '✓ UNBROKEN' : '✗ BROKEN at ' + esc(walk.brokenAt)) + '</div>';
-  h += '<div class="kvline" style="margin-bottom:10px;color:var(--dim)">node: <b style="color:var(--creamL)">' + esc(walk.node) + '</b> · reach: ' + (walk.reach.length ? walk.reach.map((r) => '<span class="chip ok">' + esc(r) + '</span>').join('') : '<span class="chip bad">none</span>') + '</div>';
-  walk.links.forEach((l) => {
-    h += '<div class="linkrow"><span class="chip ' + (l.ok ? 'ok' : 'bad') + '">' + (l.ok ? '✓' : '✗') + ' ' + esc(l.link) + '</span><span style="color:var(--dim);font-size:13px">' + esc(l.of) + '</span></div>';
-  });
-  h += '<p style="margin-top:12px;color:var(--dim);font-size:13px">' + esc(walk.why) + '</p>';
-  out.innerHTML = h;
-  out.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-$('walkGood').addEventListener('click', () => {
-  const node = 'triage-1b';
-  const manifest = exampleManifest('real');
-  const listing = exampleListing(node, manifest.hash);
-  const served = exampleServed(node, manifest.hash);
-  const audited = exampleAudited(manifest.hash);
-  render(provenanceChain({ node, manifest, listing, served, audited }));
-});
-$('walkBroken').addEventListener('click', () => {
-  const node = 'triage-1b';
-  const manifest = exampleManifest('real');
-  const decoyManifest = exampleManifest('a-different-build-entirely');
-  const listing = exampleListing(node, decoyManifest.hash);   // sealed against the WRONG build
-  render(provenanceChain({ node, manifest, listing }));
+$('riskBtn').addEventListener('click', () => {
+  const r = riskSelfCheck($('riskText').value);
+  const col = r.tier === 'minimal' ? 'dim' : 'warn';
+  $('riskOut').innerHTML = '<div class="verdict ' + col + '">' + esc(r.label) + '</div><p style="color:var(--dim);font-size:13.5px">' + esc(r.why) + '</p>';
 });
 
-// ── coupling health + shared budget demos ──────────────────────────────────────────────────────────
-function renderCouple(r){
-  const out = $('coupleOut');
-  out.classList.remove('hidden');
-  const col = r.sound ? 'good' : 'bad';
-  out.innerHTML = '<div class="verdict ' + col + '">' + (r.sound ? '✓ ' : '✗ ') + r.state + '</div><p style="color:var(--dim);font-size:13px">' + esc(r.why) + '</p>';
-  out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+// the honest, current posture — what is actually published as of this page, not aspirational.
+// dsar-route: TRUE today (the mailto contact already works on every page). ai-disclosure-inline:
+// TRUE on this build (mint.html now carries the one-line AI-output disclosure). The three notices
+// and the cookie statement are DRAFTED here, not yet PUBLISHED (published = live + counsel-reviewed).
+// terms-of-use is honestly MISSING — not drafted by anyone yet, not invented here.
+const CURRENT_STATUSES = {
+  'privacy-notice': 'drafted', 'ai-transparency-notice': 'drafted', 'acceptable-use-notice': 'drafted',
+  'cookie-consent': 'drafted', 'terms-of-use': 'missing', 'dsar-route': 'published', 'ai-disclosure-inline': 'published',
+};
+const posture = compliancePosture(CURRENT_STATUSES);
+if (posture.ok) {
+  const h = '<div class="verdict ' + (posture.maturityPct >= 80 ? 'warn' : 'dim') + '">' + posture.published + ' of ' + posture.total + ' published · ' + posture.maturityPct + '% maturity</div>'
+    + '<div class="bar"><div style="width:' + posture.maturityPct + '%"></div></div>'
+    + '<p style="color:var(--dim);font-size:13px">Not yet published: ' + (posture.gaps.length ? posture.gaps.map(esc).join(', ') : 'none') + '</p>';
+  $('postureOut').innerHTML = h;
 }
-$('coupleSov').addEventListener('click', () => renderCouple(coupleHealth({ interactions: 100, aChecks: 55, bChecks: 50, agreements: 80 })));
-$('coupleMerged').addEventListener('click', () => renderCouple(coupleHealth({ interactions: 100, aChecks: 50, bChecks: 50, agreements: 100 })));
-$('coupleExtractive').addEventListener('click', () => renderCouple(coupleHealth({ interactions: 100, aChecks: 95, bChecks: 20, agreements: 80 })));
-
-function renderBudget(r){
-  const out = $('budgetOut');
-  out.classList.remove('hidden');
-  const col = r.allowed ? 'good' : 'bad';
-  out.innerHTML = '<div class="verdict ' + col + '">' + (r.allowed ? '✓ GRANTED' : '✗ REFUSED') + '</div><p style="color:var(--dim);font-size:13px">spent ' + esc(String(r.limb.spent)) + ' of ' + esc(String(r.limb.budget)) + ' — ' + esc(r.why) + '</p>';
-  out.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-$('budgetOk').addEventListener('click', () => renderBudget(borrowLimb(makeMeshLimb(20).limb, 8)));
-$('budgetSpent').addEventListener('click', () => { const l = makeMeshLimb(20).limb; const first = borrowLimb(l, 17); renderBudget(borrowLimb(first.limb, 8)); });
-
-$('vBtn').addEventListener('click', () => {
-  const out = $('vOut');
-  let receipt;
-  try { receipt = JSON.parse($('vPaste').value); }
-  catch { out.innerHTML = '<span style="color:var(--bad)">✗ That is not valid JSON — paste the whole receipt.</span>'; return; }
-  const v = verifyProvenanceReceipt(receipt);
-  if (!v.ok) { out.innerHTML = '<span style="color:var(--bad)">✗ This is not a fallforge provenance receipt.</span>'; return; }
-  if (!v.valid) { out.innerHTML = '<span style="color:var(--bad)">✗ CHANGED — ' + esc(v.why) + '</span>'; return; }
-  out.innerHTML = '<span style="color:var(--good)">✓ GENUINE — intact: <b>' + esc(String(receipt.intact)) + '</b>, reach: ' + esc((receipt.reach || []).join(', ') || 'none') + '</span>';
-});
 </script>
 </body>
 </html>

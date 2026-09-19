@@ -4,6 +4,7 @@ import {
   REACH, sha256, canon,
   provenanceChain, provenanceReceipt, provenanceSignable, verifyProvenanceReceipt,
   BALANCE_MIN, AGREE_MIN, coupleHealth, makeMeshLimb, borrowLimb,
+  RISK_TIERS, riskSelfCheck, CHECKLIST, compliancePosture, compliancePostureReceipt, verifyCompliancePostureReceipt,
 } from './kernel.mjs';
 
 const H = (s) => sha256(s).hash;
@@ -265,6 +266,103 @@ test('borrowLimb: the shared frontier budget, exact boundary, a refusal costs no
   const b2 = borrowLimb(b1.limb, 6);
   assert.equal(b2.allowed, false, 'a second borrow against the already-spent limb must see the real remaining budget');
   assert.match(b2.why, /answers on its own/);
+});
+
+// ── organ 3: the trust & compliance organ ──────────────────────────────────────────────────────────
+test('riskSelfCheck: flags a category, never asserts a legal conclusion, no dated claim anywhere', () => {
+  assert.deepEqual(RISK_TIERS, ['prohibited', 'high', 'limited', 'minimal']);
+
+  const social = riskSelfCheck('a social scoring system for citizens');
+  assert.equal(social.tier, 'prohibited');
+  assert.ok(social.matched.includes('social scoring'));
+  assert.ok(social.why.includes('conformity assessment'), 'always defers to the deployer’s own assessment');
+
+  const cv = riskSelfCheck('screens CVs for a recruitment agency and ranks candidates');
+  assert.equal(cv.tier, 'high');
+  assert.ok(cv.matched.includes('employment / recruitment'));
+
+  const clean = riskSelfCheck('a spam filter for incoming email');
+  assert.equal(clean.tier, 'minimal');
+  assert.deepEqual(clean.matched, []);
+  assert.ok(clean.why.includes('not a clearance'), 'a non-match is never framed as a pass');
+
+  // priority: a description that trips BOTH a prohibited and a high trigger reports PROHIBITED,
+  // never softened — same load-bearing rule as fall-euaiact's own priority order
+  const both = riskSelfCheck('a biometric social scoring system for citizens');
+  assert.equal(both.tier, 'prohibited');
+
+  // never throws, never refuses — garbage input is just treated as no description, not a crash
+  assert.equal(riskSelfCheck(null).tier, 'minimal');
+  assert.equal(riskSelfCheck(42).tier, 'minimal');
+  assert.equal(riskSelfCheck(undefined).tier, 'minimal');
+
+  // no hardcoded date anywhere in the output — the exact trap caught in fall-euaiact's donor code
+  const allOutputs = [social, cv, clean, both].map((r) => JSON.stringify(r)).join(' ');
+  assert.equal(/20\d\d-\d\d-\d\d/.test(allOutputs), false, 'riskSelfCheck must never emit a calendar date, got: ' + allOutputs);
+});
+
+test('compliancePosture: a factual coverage reading over FallForge’s own checklist, weighted correctly', () => {
+  assert.equal(CHECKLIST.length, 7);
+  const allPublished = {};
+  for (const item of CHECKLIST) allPublished[item] = 'published';
+  const full = compliancePosture(allPublished);
+  assert.equal(full.ok, true);
+  assert.equal(full.maturityPct, 100);
+  assert.deepEqual(full.gaps, []);
+  assert.ok(full.why.includes('every checklist item is published'));
+
+  const allMissing = {};
+  for (const item of CHECKLIST) allMissing[item] = 'missing';
+  const empty = compliancePosture(allMissing);
+  assert.equal(empty.maturityPct, 0);
+  assert.equal(empty.gaps.length, 7);
+
+  // a known, hand-computed mix pins the exact weighted arithmetic (kills operator mutants in the sum)
+  const mixed = { ...allMissing, 'privacy-notice': 'published', 'ai-transparency-notice': 'drafted' };
+  const m = compliancePosture(mixed);
+  // weightSum = 1(published) + 0.5(drafted) + 0*5(missing) = 1.5 ; 1.5/7 = 21.43% -> rounds to 21
+  assert.equal(m.maturityPct, 21);
+  assert.equal(m.published, 1);
+  assert.equal(m.gaps.length, 6);
+  assert.equal(m.gaps.includes('privacy-notice'), false);
+  assert.ok(m.why.includes('1 of 7 published'));
+
+  // refusals: not an object, a missing key, an unknown status value
+  assert.equal(compliancePosture('nope').ok, false);
+  assert.equal(compliancePosture({}).ok, false);
+  const partial = { ...allPublished }; delete partial['dsar-route'];
+  assert.equal(compliancePosture(partial).ok, false);
+  assert.equal(compliancePosture({ ...allPublished, 'dsar-route': 'sort-of' }).ok, false);
+});
+
+test('compliancePostureReceipt / verifyCompliancePostureReceipt: seals a reading and catches a lying total', () => {
+  const statuses = {};
+  for (const item of CHECKLIST) statuses[item] = 'published';
+  const r = compliancePostureReceipt(statuses, '2026-09-19T00:00:00Z');
+  assert.equal(r.ok, true);
+  assert.equal(r.receipt.kind, 'fallforge-compliance-posture');
+  assert.equal(r.receipt.maturityPct, 100);
+  assert.equal(r.receipt.hash.length, 64);
+  assert.equal(verifyCompliancePostureReceipt(r.receipt).valid, true);
+
+  assert.equal(compliancePostureReceipt(statuses, '').ok, false);
+  assert.equal(compliancePostureReceipt(statuses, 7).ok, false);
+  assert.equal(compliancePostureReceipt('nope', 't').ok, false);
+
+  assert.equal(verifyCompliancePostureReceipt({ ...r.receipt, createdAt: 'x' }).valid, false);   // tamper
+
+  // forge: published + gaps.length no longer adds up to total, re-hash consistently
+  const b = { ...r.receipt }; delete b.hash; delete b.signature;
+  b.gaps = [...b.gaps, 'an-extra-gap-not-reflected-in-published-or-total'];
+  const forged = { ...b, hash: sha256(canon(b)).hash };
+  const v = verifyCompliancePostureReceipt(forged);
+  assert.equal(v.valid, false);
+  assert.ok(v.why.includes('add up'), 'the lie is named, got: ' + v.why);
+
+  assert.equal(verifyCompliancePostureReceipt({ kind: 'other', hash: 'x' }).ok, false);
+  assert.equal(verifyCompliancePostureReceipt({ kind: 'fallforge-compliance-posture' }).ok, false);
+  const noGaps = { ...b, gaps: 'nope' }; noGaps.hash = sha256(canon(noGaps)).hash;
+  assert.equal(verifyCompliancePostureReceipt(noGaps).valid, false);
 });
 
 test('sha256 + canon: the vendored pair still holds (FIPS-pinned, order-blind)', () => {

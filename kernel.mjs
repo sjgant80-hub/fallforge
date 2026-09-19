@@ -286,3 +286,131 @@ export function borrowLimb(limb, cost) {
   if (limb.spent + cost > limb.budget) return { ok: true, allowed: false, spent: 0, limb, why: 'the shared frontier budget is spent — the mesh answers on its own' };
   return { ok: true, allowed: true, spent: cost, limb: { budget: limb.budget, spent: limb.spent + cost }, why: 'within the shared budget' };
 }
+
+// ── ORGAN 3: the trust & compliance organ ──────────────────────────────────────────────────────────
+// Two deterministic helpers, mined for IDEAS from fall-euaiact and fallseed-compliance and rebuilt
+// fresh — not their old copy, and not their literal code. Both donors are real and gated (confirmed
+// by reading their kernels, not their templated READMEs), and one thing in fall-euaiact's kernel was
+// caught stale by re-verifying rather than trusting it: `obligationsFor('high')` hardcodes
+// `deadline: '2026-08-02'` and presents it as an upcoming date. Today is past that date — the
+// high-risk regime is already in force, not still pending. Neither function below carries a
+// hardcoded date anywhere, for exactly that reason: a compliance tool that goes stale by the
+// calendar is worse than one that says nothing, because it looks current when it silently isn't.
+//
+// riskSelfCheck is a HEURISTIC PRE-SCREEN, not a legal determination — it never asserts a tier as
+// fact, only flags a possible match against the SAME category list already in FallForge's own
+// counsel-drafted Acceptable Use notice, and always ends by naming the user as the deployer who
+// needs their own conformity assessment. compliancePosture is factual and safe by construction: it
+// only ever answers "is this specific item of ours published or not", never a claim about the law.
+
+export const RISK_TIERS = Object.freeze(['prohibited', 'high', 'limited', 'minimal']);
+
+// The trigger list mirrors FallForge's own Acceptable Use notice category-for-category (Article 5
+// prohibited practices; the Annex III high-risk domains it already names) — this operationalizes
+// the list that already exists, rather than drafting a new one.
+const RISK_RULES = [
+  { tier: 'prohibited', label: 'Article 5 — a prohibited practice', triggers: [
+    { re: /social scor|citizen scor/i, note: 'social scoring' },
+    { re: /manipulat|subliminal|exploit.*vulnerab/i, note: 'manipulative or exploitative technique' },
+    { re: /real.?time.*biometric.*public|facial recognition.*public/i, note: 'real-time remote biometric ID in public spaces' },
+    { re: /scrap.*facial|untargeted.*facial/i, note: 'untargeted facial-image scraping' },
+  ] },
+  { tier: 'high', label: 'Annex III — a high-risk domain', triggers: [
+    { re: /biometric/i, note: 'biometrics' },
+    { re: /critical infrastructur|power grid|water supply/i, note: 'critical infrastructure' },
+    { re: /admissio|exam.*scor|vocational.*select|student/i, note: 'education / vocational selection' },
+    { re: /\b(cv|resume|résumé)s?\b|hir(e|ing)|recruit|employment.*decis/i, note: 'employment / recruitment' },
+    { re: /credit.?worthi|loan.*decis|underwrit|essential.*(private|public).*service/i, note: 'essential services, including creditworthiness' },
+    { re: /law enforcement|polic(e|ing)/i, note: 'law enforcement' },
+    { re: /migrat|asylum|border control/i, note: 'migration' },
+    { re: /judicial|court.*ruling|administration of justice/i, note: 'administration of justice' },
+  ] },
+];
+
+/** riskSelfCheck(text) — a heuristic pre-screen against FallForge's own Acceptable Use categories.
+ *  Never a legal judgment: flags what MIGHT match, cites nothing dated, always defers to counsel. */
+export function riskSelfCheck(text) {
+  const t = isStr(text) ? text : '';
+  for (const group of RISK_RULES) {
+    const hits = group.triggers.filter((trig) => trig.re.test(t)).map((trig) => trig.note);
+    if (hits.length > 0) {
+      return { ok: true, tier: group.tier, label: group.label, matched: hits,
+        why: 'This description may touch ' + group.label + ' (' + hits.join(', ') + '). This is a heuristic pre-screen, not a legal determination. You are the controller/deployer for anything you build — conduct your own conformity assessment before deploying in a regulated context.' };
+    }
+  }
+  return { ok: true, tier: 'minimal', label: 'no flagged category matched', matched: [],
+    why: 'No listed high-risk or prohibited category matched this description. That is not a clearance — it means this pre-screen found nothing to flag. You are still the controller/deployer for anything you build.' };
+}
+
+// FallForge's own real compliance checklist (mirrors the drafted compliance pack's own section 5,
+// so this tracks the actual work, not a generic template).
+export const CHECKLIST = Object.freeze([
+  'privacy-notice', 'ai-transparency-notice', 'acceptable-use-notice',
+  'cookie-consent', 'terms-of-use', 'dsar-route', 'ai-disclosure-inline',
+]);
+const STATUSES = Object.freeze(['missing', 'drafted', 'published']);
+const STATUS_WEIGHT = Object.freeze({ missing: 0, drafted: 0.5, published: 1 });
+
+function validStatuses(statuses) {
+  if (!isObj(statuses)) return 'statuses must be an object keyed by checklist item';
+  for (const item of CHECKLIST) {
+    if (!(item in statuses)) return 'missing a status for "' + item + '"';
+    if (!STATUSES.includes(statuses[item])) return '"' + item + '" must be one of ' + STATUSES.join(', ');
+  }
+  return null;
+}
+
+/** compliancePosture(statuses) — a factual coverage score over FallForge's OWN checklist items.
+ *  Never claims compliance with the law; only ever reports whether FallForge's own notices exist. */
+export function compliancePosture(statuses) {
+  const bad = validStatuses(statuses);
+  if (bad) return { ok: false, why: bad };
+  let weightSum = 0;
+  let published = 0;
+  const gaps = [];
+  for (const item of CHECKLIST) {
+    const s = statuses[item];
+    weightSum += STATUS_WEIGHT[s];
+    if (s === 'published') published++; else gaps.push(item);
+  }
+  const maturityPct = Math.round((weightSum / CHECKLIST.length) * 100);
+  return { ok: true, total: CHECKLIST.length, published, gaps, maturityPct,
+    why: gaps.length === 0 ? 'every checklist item is published' : (CHECKLIST.length - gaps.length) + ' of ' + CHECKLIST.length + ' published — not yet published: ' + gaps.join(', ') };
+}
+
+/** compliancePostureReceipt(statuses, createdAt) — seals a posture reading into a re-verifiable receipt. */
+export function compliancePostureReceipt(statuses, createdAt) {
+  if (!isStr(createdAt)) return { ok: false, why: 'the receipt needs a createdAt timestamp' };
+  if (createdAt.length === 0) return { ok: false, why: 'the receipt needs a non-empty createdAt timestamp' };
+  const p = compliancePosture(statuses);
+  if (!p.ok) return p;
+  const sh = sha256(canon(statuses));
+  if (!sh.ok) return { ok: false, why: sh.why };
+  const body = {
+    v: 1, kind: 'fallforge-compliance-posture',
+    total: p.total, published: p.published, gaps: p.gaps, maturityPct: p.maturityPct,
+    statusesHash: sh.hash, createdAt,
+    scope: 'A factual coverage reading over FallForge’s own compliance checklist — whether ITS notices are published, not a claim about compliance with the law. Operational scaffolding a lawyer can review, not a certification.',
+  };
+  const h = sha256(canon(body));
+  if (!h.ok) return { ok: false, why: h.why };
+  return { ok: true, receipt: { ...body, hash: h.hash } };
+}
+
+/** verifyCompliancePostureReceipt(r) — matches its own hash AND the reading matches its own gaps/count. */
+export function verifyCompliancePostureReceipt(r) {
+  if (!isObj(r)) return { ok: false, why: 'not a fallforge compliance posture receipt' };
+  if (r.kind !== 'fallforge-compliance-posture') return { ok: false, why: 'not a fallforge compliance posture receipt' };
+  if (!isHash(r.hash)) return { ok: false, why: 'the receipt has no hash' };
+  const body = { ...r };
+  delete body.hash;
+  delete body.signature;
+  const h = sha256(canon(body));
+  if (!h.ok) return { ok: false, why: h.why };
+  if (h.hash !== r.hash) return { ok: true, valid: false, why: 'the receipt does not match its own fingerprint — it was changed after it was issued' };
+  if (!Array.isArray(r.gaps)) return { ok: true, valid: false, why: 'the receipt has no gaps record' };
+  if (!isInt(r.total)) return { ok: true, valid: false, why: 'the receipt has no total' };
+  if (!isInt(r.published)) return { ok: true, valid: false, why: 'the receipt has no published count' };
+  if (r.published + r.gaps.length !== r.total) return { ok: true, valid: false, why: 'the receipt’s published count and gaps do not add up to its own total' };
+  return { ok: true, valid: true, why: 'posture intact' };
+}
