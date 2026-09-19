@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FallForge · Trust &amp; compliance</title>
-<meta name="description" content="FallForge runs entirely on your own device — private by construction, offline, nothing uploaded. Built toward EU AI Act minimal-risk, with a signed, re-verifiable audit trail. Architecture, not a compliance certification.">
+<meta name="description" content="FallForge runs entirely on your own device — private by construction, offline, nothing uploaded. With a signed, re-verifiable audit trail. Architecture, not a compliance certification.">
 <meta name="author" content="AI-Native Solutions">
 <meta name="theme-color" content="#0b0a0f">
 <meta property="og:title" content="FallForge · Trust &amp; compliance">
@@ -32,7 +32,7 @@
 
 <section class="hero">
   <div class="tag"><span class="glyph">◈</span> AI-Native Solutions · trust &amp; compliance</div>
-  <h1 style="font-family:var(--serif);font-size:2rem;color:var(--creamL);margin-bottom:16px">Private by construction. Built toward GDPR and EU&nbsp;AI&nbsp;Act minimal-risk.</h1>
+  <h1 style="font-family:var(--serif);font-size:2rem;color:var(--creamL);margin-bottom:16px">Private by construction. Nothing leaves your device.</h1>
   <p class="lede" style="font-size:15px">FallForge runs on your machine, offline. Your task, your examples and your model never leave your device — so there is nothing to leak, nothing to breach, and nothing for us to process. Privacy and accountability are not policies bolted on afterward. They are the architecture.</p>
 </section>
 
@@ -44,28 +44,15 @@
 </section>
 
 <section class="section">
-  <span class="eyebrow">EU AI Act · built for the minimal-risk profile</span>
+  <span class="eyebrow">The accountability layer</span>
   <h2 style="font-family:var(--serif);font-size:1.4rem;color:var(--creamL);margin-bottom:10px">Narrow by design, with the accountability higher-risk systems are asked for.</h2>
-  <p style="color:var(--dim)">FallForge builds <strong>narrow, task-specific</strong> models — the <strong>minimal-risk</strong> profile under the EU AI Act, which carries no mandatory conformity assessment, no registration and no imposed controls. It is not a general-purpose (GPAI) model provider; you are not training a foundation model.</p>
-  <p style="color:var(--dim);margin-top:10px">Even so, every mint, shelf listing and hub receipt is <strong>content-hashed and re-verifiable offline</strong> — the <a href="chain.html">provenance chain</a> walks it end to end and names any break, live, in your browser. That's the same kind of <strong>record-keeping and traceability (Art&nbsp;12)</strong> higher-risk systems are required to keep — built in from day one rather than retrofitted if a use case ever moves up a tier.</p>
+  <p style="color:var(--dim)">FallForge builds <strong>narrow, task-specific</strong> models. It is not a general-purpose (GPAI) model provider; you are not training a foundation model.</p>
+  <p style="color:var(--dim);margin-top:10px">Even so, every mint, shelf listing and hub receipt is <strong>content-hashed and re-verifiable offline</strong> — the <a href="chain.html">provenance chain</a> walks it end to end and names any break, live, in your browser. A signed, tamper-evident record of custody, built in from day one.</p>
 </section>
 
 <section class="section">
   <span class="eyebrow">AI transparency</span>
   <p style="color:var(--dim)">Straight about what it is: FallForge creates and evaluates small, task-specific AI models. Outputs are AI-generated — keep a human in the loop for anything that matters. The signed <strong>scorecard receipt</strong> is evidence your model beat a baseline on your own held-out data — proof of measured performance, not a promise of truth. Once minted, the model is <strong>yours</strong>, on your machine, under your control.</p>
-</section>
-
-<section class="section">
-  <span class="eyebrow">The one line that protects you</span>
-  <h2 style="font-family:var(--serif);font-size:1.4rem;color:var(--creamL);margin-bottom:10px">Minimal-risk as delivered. Your deployment sets the rest.</h2>
-  <p style="color:var(--dim)">FallForge is a general-purpose tool, so the Act’s risk tier attaches to <strong>your use</strong>, not to the tool. Put a model into a <strong>high-risk</strong> job — hiring, credit, biometrics, essential services, law enforcement — and the obligations attach to you as the <strong>deployer</strong>: run your own conformity assessment first. <strong>Prohibited practices</strong> (Art&nbsp;5 — social scoring, manipulation, untargeted biometric scraping) are off-limits, full stop. Everything else — the repetitive, high-volume, unregulated work you’re overpaying to rent — is exactly what this is for.</p>
-  <div style="margin-top:22px">
-    <span class="eyebrow">Check where your use lands</span>
-    <p style="color:var(--dim);margin-bottom:10px">Describe what you want to build — this screens it against the Article&nbsp;5 and Annex&nbsp;III categories in seconds.</p>
-    <textarea id="riskText" placeholder="e.g. a chatbot that answers support tickets"></textarea>
-    <div style="margin-top:10px"><button class="btn ghost" id="riskBtn">Check against Article 5 / Annex III →</button></div>
-    <div id="riskOut" style="margin-top:12px"></div>
-  </div>
 </section>
 
 <p style="color:var(--muted);font-size:12.5px;max-width:760px">This page describes FallForge's architecture — it is not a third-party compliance certification. Full regulatory review sits with counsel.</p>
@@ -495,11 +482,6 @@ function verifyCompliancePostureReceipt(r) {
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-$('riskBtn').addEventListener('click', () => {
-  const r = riskSelfCheck($('riskText').value);
-  const col = r.tier === 'minimal' ? 'dim' : 'warn';
-  $('riskOut').innerHTML = '<div class="verdict ' + col + '">' + esc(r.label) + '</div><p style="color:var(--dim);font-size:13.5px">' + esc(r.why) + '</p>';
-});
 
 </script>
 </body>
