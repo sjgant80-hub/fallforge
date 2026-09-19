@@ -17,6 +17,7 @@
 
 const isStr = (v) => typeof v === 'string';
 const isObj = (v) => typeof v === 'object' && v !== null && !Array.isArray(v);
+const isInt = (v) => Number.isInteger(v);
 const HEX = /^[0-9a-f]+$/;
 const isHash = (v) => isStr(v) && v.length === 64 && HEX.test(v);
 
@@ -208,4 +209,80 @@ export function verifyProvenanceReceipt(r) {
     for (let i = 0; i < expectedReach.length; i++) { if (r.reach[i] !== expectedReach[i]) return { ok: true, valid: false, why: 'the receipt’s reach does not match its own links' }; }
   }
   return { ok: true, valid: true, why: 'provenance intact' };
+}
+
+// ── ORGAN 2: coupling health + the shared frontier budget ─────────────────────────────────────────
+// fallforge-mesh's third wall, quorum() (exact-agreement plurality across N answers), is genuinely
+// superseded — Veridia's adjudicate() does the same job per-field, honestly escalates a SPLIT instead
+// of silently tying, and — the part quorum() never checked at all — refuses a panel that isn't
+// independent. Dropped, not ported. Its other two walls have no Veridia equivalent and are real,
+// distinct problems: coupleHealth is a LONGITUDINAL metric over a standing pair's history of mutual
+// checking (not a one-shot cross-check), and the shared limb budget is cross-node RESOURCE governance
+// (nothing in Veridia's ladder or fallforgemint governs how many nodes may borrow the same frontier
+// fallback). Ported faithfully — the algorithm already carries a 65/66 witness-clean mutation gate in
+// fallforge-mesh; integer-pinned thresholds (×1000) so a float boundary can never be an unkillable
+// equivalent mutant, same reason fallforge-mesh pinned them that way originally.
+export const BALANCE_MIN = 618;   // ×1000: two nodes must check each other within ~0.618 balance
+export const AGREE_MIN = 500;     // ×1000: a sound couple agrees at least half the time (competent)
+
+function validPair(p) {
+  if (!isObj(p)) return 'a pair record is an object';
+  for (const f of ['interactions', 'aChecks', 'bChecks', 'agreements']) {
+    if (!isInt(p[f])) return f + ' must be an integer';
+    if (p[f] < 0) return f + ' must be a non-negative integer';
+  }
+  if (p.aChecks > p.interactions) return 'a side cannot check more times than the pair interacted';
+  if (p.bChecks > p.interactions) return 'a side cannot check more times than the pair interacted';
+  if (p.agreements > p.interactions) return 'agreements cannot exceed interactions';
+  return null;
+}
+
+/** coupleHealth(pair) — is a standing pair of nodes soundly coupled, over its whole history so far?
+ *  FROZEN (never interacted) / STARVED (one side never checks, or they rarely agree) / MERGED
+ *  (perfect agreement — correlated, not verified, false confidence) / EXTRACTIVE (lopsided checking)
+ *  / SOVEREIGN (balanced, checks both ways, agrees most but not always — a sound couple). */
+export function coupleHealth(pair) {
+  const bad = validPair(pair);
+  if (bad) return { ok: false, why: bad };
+  const { interactions, aChecks, bChecks, agreements } = pair;
+  if (interactions === 0) return { ok: true, state: 'FROZEN', sound: false, why: 'the two never interacted' };
+  if (aChecks === 0) return { ok: true, state: 'STARVED', sound: false, why: 'one side never checks the other — no mutual verification' };
+  if (bChecks === 0) return { ok: true, state: 'STARVED', sound: false, why: 'one side never checks the other — no mutual verification' };
+  if (agreements === interactions) return { ok: true, state: 'MERGED', sound: false, why: 'the two agree every time — correlated, not independent; a merged pair gives false confidence' };
+  const lo = Math.min(aChecks, bChecks);
+  const hi = Math.max(aChecks, bChecks);
+  const balanceOk = lo * 1000 >= BALANCE_MIN * hi;
+  const agreeOk = agreements * 1000 >= AGREE_MIN * interactions;
+  if (!balanceOk) return { ok: true, state: 'EXTRACTIVE', sound: false, why: 'one node does most of the checking — the coupling is lopsided' };
+  if (!agreeOk) return { ok: true, state: 'STARVED', sound: false, why: 'the two rarely agree — they are not competently coupled on the same work' };
+  return { ok: true, state: 'SOVEREIGN', sound: true, why: 'checked both ways, balanced, agreeing most but not all of the time — a sound couple' };
+}
+
+function validLimb(l) {
+  if (!isObj(l)) return 'a shared limb is { budget, spent }';
+  if (!isInt(l.budget)) return 'limb budget must be an integer';
+  if (l.budget < 0) return 'limb budget must be non-negative';
+  if (!isInt(l.spent)) return 'limb spent must be an integer';
+  if (l.spent < 0) return 'limb spent must be non-negative';
+  if (l.spent > l.budget) return 'limb spent exceeds its budget';
+  return null;
+}
+
+/** makeMeshLimb(budget) — the hub-wide shared frontier resource: one budget, spent tracked. */
+export function makeMeshLimb(budget) {
+  const l = { budget, spent: 0 };
+  const bad = validLimb(l);
+  if (bad) return { ok: false, why: bad };
+  return { ok: true, limb: l };
+}
+
+/** borrowLimb(limb, cost) — no single served node may drain the shared frontier on the mesh's
+ *  behalf; once spent, the mesh answers on its own rather than one node exhausting everyone's share. */
+export function borrowLimb(limb, cost) {
+  const bad = validLimb(limb);
+  if (bad) return { ok: false, why: bad };
+  if (!isInt(cost)) return { ok: true, allowed: false, spent: 0, limb, why: 'unknown cost — refused' };
+  if (cost < 0) return { ok: true, allowed: false, spent: 0, limb, why: 'unknown cost — refused' };
+  if (limb.spent + cost > limb.budget) return { ok: true, allowed: false, spent: 0, limb, why: 'the shared frontier budget is spent — the mesh answers on its own' };
+  return { ok: true, allowed: true, spent: cost, limb: { budget: limb.budget, spent: limb.spent + cost }, why: 'within the shared budget' };
 }

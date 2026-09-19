@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   REACH, sha256, canon,
   provenanceChain, provenanceReceipt, provenanceSignable, verifyProvenanceReceipt,
+  BALANCE_MIN, AGREE_MIN, coupleHealth, makeMeshLimb, borrowLimb,
 } from './kernel.mjs';
 
 const H = (s) => sha256(s).hash;
@@ -203,6 +204,67 @@ test('verifyProvenanceReceipt: catches tamper, a lying intact flag, and a lying 
   assert.equal(verifyProvenanceReceipt(noLinks).valid, false);
   const noReach = { ...pbody, reach: 'nope' }; noReach.hash = sha256(canon(noReach)).hash;
   assert.equal(verifyProvenanceReceipt(noReach).valid, false);
+});
+
+// ── organ 2: coupling health + the shared frontier budget ─────────────────────────────────────────
+test('coupleHealth: SOVEREIGN needs balance AND real disagreement, not perfect agreement', () => {
+  assert.equal(coupleHealth({ interactions: 100, aChecks: 50, bChecks: 50, agreements: 80 }).state, 'SOVEREIGN');
+  assert.equal(coupleHealth({ interactions: 100, aChecks: 50, bChecks: 50, agreements: 80 }).sound, true);
+  assert.equal(coupleHealth({ interactions: 0, aChecks: 0, bChecks: 0, agreements: 0 }).state, 'FROZEN');
+  assert.equal(coupleHealth({ interactions: 100, aChecks: 0, bChecks: 50, agreements: 40 }).state, 'STARVED');   // a never checks
+  assert.equal(coupleHealth({ interactions: 100, aChecks: 50, bChecks: 0, agreements: 40 }).state, 'STARVED');   // b never checks
+  const merged = coupleHealth({ interactions: 100, aChecks: 50, bChecks: 50, agreements: 100 });
+  assert.equal(merged.state, 'MERGED');
+  assert.match(merged.why, /correlated/);
+  assert.equal(coupleHealth({ interactions: 100, aChecks: 90, bChecks: 30, agreements: 80 }).state, 'EXTRACTIVE');
+  assert.equal(coupleHealth({ interactions: 100, aChecks: 50, bChecks: 50, agreements: 20 }).state, 'STARVED');  // balanced but rarely agree
+  assert.equal(coupleHealth({ interactions: 100, aChecks: 100, bChecks: 100, agreements: 80 }).state, 'SOVEREIGN'); // a side may check every interaction
+});
+
+test('coupleHealth: the balance and agreement bands are exact integer boundaries (kills >= vs >)', () => {
+  const atBalanceBand = coupleHealth({ interactions: 1000, aChecks: 618, bChecks: 1000, agreements: 800 });
+  assert.equal(atBalanceBand.state, 'SOVEREIGN');
+  const belowBalanceBand = coupleHealth({ interactions: 1000, aChecks: 617, bChecks: 1000, agreements: 800 });
+  assert.equal(belowBalanceBand.state, 'EXTRACTIVE');
+  const atAgreeBand = coupleHealth({ interactions: 1000, aChecks: 700, bChecks: 700, agreements: 500 });
+  assert.equal(atAgreeBand.state, 'SOVEREIGN');
+  const belowAgreeBand = coupleHealth({ interactions: 1000, aChecks: 700, bChecks: 700, agreements: 499 });
+  assert.equal(belowAgreeBand.state, 'STARVED');
+  assert.equal(BALANCE_MIN, 618);
+  assert.equal(AGREE_MIN, 500);
+});
+
+test('coupleHealth: refuses only on malformed input, each guard named', () => {
+  assert.equal(coupleHealth(null).ok, false);
+  assert.match(coupleHealth({ interactions: -1, aChecks: 0, bChecks: 0, agreements: 0 }).why, /non-negative/);
+  assert.match(coupleHealth({ interactions: 5, aChecks: 6, bChecks: 1, agreements: 1 }).why, /check more times/);
+  assert.match(coupleHealth({ interactions: 5, aChecks: 1, bChecks: 6, agreements: 1 }).why, /check more times/);
+  assert.match(coupleHealth({ interactions: 5, aChecks: 1, bChecks: 1, agreements: 6 }).why, /agreements cannot exceed/);
+  assert.equal(coupleHealth({ interactions: 5, aChecks: 1.5, bChecks: 1, agreements: 1 }).ok, false);   // non-integer
+});
+
+test('borrowLimb: the shared frontier budget, exact boundary, a refusal costs nothing', () => {
+  const l = makeMeshLimb(10).limb;
+  assert.equal(borrowLimb(l, 10).allowed, true);           // exactly the budget
+  assert.equal(borrowLimb(l, 10).limb.spent, 10);
+  assert.equal(borrowLimb(l, 11).allowed, false);          // one over
+  assert.equal(borrowLimb(l, 11).spent, 0);
+  assert.equal(borrowLimb(l, 0).allowed, true);            // zero cost is valid
+  assert.equal(borrowLimb(l, -1).allowed, false);
+  assert.equal(makeMeshLimb(0).ok, true);                   // a zero-budget mesh never lends
+  assert.equal(makeMeshLimb(-1).ok, false);
+  assert.equal(makeMeshLimb(1.5).ok, false);
+  assert.equal(borrowLimb({ budget: 5, spent: 9 }, 0).ok, false);    // spent already exceeds budget
+  assert.equal(borrowLimb({ budget: 5, spent: -1 }, 0).ok, false);
+  assert.equal(borrowLimb(null, 1).ok, false);
+  assert.equal(borrowLimb({ budget: 5, spent: 5 }, 0).allowed, true);   // spent === budget is still valid
+  // sequential borrows against the SAME shared budget — no single borrow can see past its own call,
+  // so the mesh-wide cap only holds if callers thread the returned limb through, which this pins
+  const b1 = borrowLimb(l, 6);
+  assert.equal(b1.allowed, true);
+  const b2 = borrowLimb(b1.limb, 6);
+  assert.equal(b2.allowed, false, 'a second borrow against the already-spent limb must see the real remaining budget');
+  assert.match(b2.why, /answers on its own/);
 });
 
 test('sha256 + canon: the vendored pair still holds (FIPS-pinned, order-blind)', () => {
